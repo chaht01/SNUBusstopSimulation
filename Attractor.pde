@@ -9,6 +9,7 @@ class Attractor {
   boolean certified;
   boolean isArriving;
   boolean debugged;
+  float guideLineDist;
   int name;
   Attractor(){}
   Attractor(float x, float y){
@@ -53,6 +54,12 @@ class Attractor {
     Attractor ret = new Attractor(position.x, position.y);
     ret.direction = direction.copy();
     ret.col = col;
+    ret.velocity = velocity.copy();
+    //ret.forward = forward!=null ? forward : null;
+    //ret.backward = backward!=null ? backward:null;
+    ret.certified = certified;
+    ret.isArriving = isArriving;
+    ret.name = name;
     return ret;
   }
 }
