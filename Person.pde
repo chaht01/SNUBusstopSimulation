@@ -7,11 +7,21 @@ class Person extends Attractor {
   boolean[] found;
   boolean debug;
   boolean seen;
+  
   ArrayList<Attractor> stations;
   int fIdx;
   int tick;
+  int log;
   Attractor follow; // object that person follow. Initialized with bus station position
   Attractor estimateTarget;
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  boolean[] stressEn;
+  int[] stressCnt;
+  float stress;
+  boolean seeStress;
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
 
   Person(float x, float y, int _fIdx, ArrayList<Attractor> _stations, int _n) {
     super(x, y, _n);
@@ -21,6 +31,7 @@ class Person extends Attractor {
     stations = _stations;
     fIdx = _fIdx;
     follow = stations.get(fIdx);
+    if(fIdx == 3) follow = new Attractor(-100, random(0, height*4/5)); /////////////////////////////////////////////////////////////pedestrian
     r = 3;
     col = follow.col;
     acceleration = new PVector(0, 0);
@@ -31,6 +42,15 @@ class Person extends Attractor {
     lineDistortion = random(follow.lineDistortion, follow.lineDistortion*2);
     debug = false;
     seen = true;
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    stressEn = new boolean[] {true, true, true};
+    stressCnt = new int[]{0,0,0};
+    stress = 0;
+    seeStress = false;
+    log = 0;
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
   }
 
   public void run() {
@@ -51,6 +71,12 @@ class Person extends Attractor {
       // Reset accelerationelertion to 0 each cycle
       acceleration.mult(0);
     }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    setStress();
+    setStressEn();
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
   }
 
   void applyForce(PVector force) {
@@ -319,6 +345,12 @@ class Person extends Attractor {
             uncertain.backward = this;
             this.forward = uncertain;
             inserted = true;
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if(stressEn[1]) {
+                stressCnt[1]++;
+                stressEn[1] = false;
+            }
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             break;
           } else {
             uncertain = uncertain.backward;
@@ -338,6 +370,12 @@ class Person extends Attractor {
         backward.forward = null;
         backward = null;
       }
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      if(stressEn[1]) {
+        stressCnt[1]++;
+        stressEn[1] = false;
+      }
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
 
@@ -380,6 +418,20 @@ class Person extends Attractor {
     } else {
       direction = velocity.copy().normalize();
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Attractor temp = forward;
+      boolean correct = false;
+      while(temp.forward!=null){
+        temp = temp.forward;
+      }
+      if(temp == stations.get(fIdx)) correct = true;
+      if(correct == false) {
+        if(stressEn[2]){ 
+          stressCnt[2]++;
+          stressEn[2] = false;
+        }
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     return certifyOk;
   }
 
@@ -469,9 +521,9 @@ class Person extends Attractor {
     float periphery = PI/2;
     PVector avgVel = new PVector(0, 0);
     PVector steer = new PVector(0, 0);
-    if (distanceFromAttractor < getIntervalSize()*4) {  
-      return steer;
-    }
+    //if (distanceFromAttractor < getIntervalSize()*4) {  ///////////////////////////////////////////////////////////////////////
+    //  return steer;
+    //}
     int count = 0;
     // For every boid in the system, check if it's too close
     for (Person other : boids) {
@@ -491,6 +543,12 @@ class Person extends Attractor {
           diff2.div(d);        // Weight by distance
           steer.add(diff2);
           count++;            // Keep track of how many
+          ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+          if(stressEn[0]) {
+            stressCnt[0]++;
+            stressEn[0] = false;
+          }
+          ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
       }
     }
@@ -585,12 +643,58 @@ class Person extends Attractor {
         fill(0);
         text("!!", position.x, position.y-10);
       }
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      if(seeStress){
+        float a = r * (1 + 4*stress); // *******************adjust constant
+        float k = constrain(a, r, 3*r);
+        fill(col);
+        noStroke();
+        pushMatrix();
+        translate(position.x, position.y);
+        rotate(theta);
+        beginShape(TRIANGLES);
+        vertex(0, -k*2);
+        vertex(-k, k*2);
+        vertex(k, k*2);
+        endShape();
+        popMatrix();
+      }
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
   }
 
   float getIntervalSize() {
     return (r*3);
   }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  void pedestBehaviors(ArrayList<Person> ps) {
+    estimateTarget = follow;
+    PVector separateForce = separate(ps);
+    PVector arriveForce = arrive();
+    separateForce.mult(2);
+    arriveForce.mult(1);
+    applyForce(separateForce);
+    applyForce(arriveForce);
+  }
+  
+  void removePedest(){
+    if(position.x<0) ps.remove(this);
+  }
+  
+  void setStress(){
+    stress = stressCnt[0]*0.1 + stressCnt[1]*0.1 + stressCnt[2]*1000; // **************adjust constant
+  }
+  
+  void setStressEn(){
+    if(tick == 0) { // ******************* adjust tick
+      stressEn[0] = true;
+      stressEn[1] = true;
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  
 }
 
 

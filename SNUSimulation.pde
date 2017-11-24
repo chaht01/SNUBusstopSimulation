@@ -16,31 +16,31 @@ void setup() {
   stations = new ArrayList<Attractor>();
   envs = new ArrayList<Env>();
   
-  Env normal = new Env(3);
-  normal.setRatio(new float[]{0.4, 0.4, 0.2});
-  normal.setStationDir(new float[][]{{0,1}, {0,1}, {0,1}});
-  normal.setGuideLineDist(new float[]{5, 5, 5});
-  normal.setLineDistortion(new float[]{0, 0, 0});
-  normal.setStrictness(new float[]{4, 4, 4});
+  Env normal = new Env(4);///////////////////////////////////////////////////////////////////////////////////////////////SY add pedestrian station
+  normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
+  normal.setStationDir(new float[][]{{0,1}, {0,1}, {0,1}, {0,0}});
+  normal.setGuideLineDist(new float[]{5, 5, 5, 0});
+  normal.setLineDistortion(new float[]{0, 0, 0, 0});
+  normal.setStrictness(new float[]{4, 4, 4, 0});
   
   Env shuffled131115 = normal.copy();
-  shuffled131115.shuffle(new int[]{1, 0, 2});
-  shuffled131115.setStationDir(new float[][]{{0,1}, {-0.5,1}, {-1,1}});
-  shuffled131115.setGuideLineDist(new float[]{15, 10, 5});
+  shuffled131115.shuffle(new int[]{1, 0, 2, 3});
+  shuffled131115.setStationDir(new float[][]{{0,1}, {-0.5,1}, {-1,1}, {0,0}});
+  shuffled131115.setGuideLineDist(new float[]{15, 10, 5, 0});
   
-  Env remove5515 = new Env(2);
-  remove5515.setRatio(new float[]{0.3, 0.2});
-  remove5515.setStationDir(new float[][]{{-0.5,1}, {-1,1}});
-  remove5515.setGuideLineDist(new float[]{15, 10});
-  remove5515.setLineDistortion(new float[]{0, 0});
-  remove5515.setStrictness(new float[]{10, 5, 3});
+  Env remove5515 = normal.copy();
+  remove5515.setRatio(new float[]{0.1, 0.1, 0, 0.8});
+  remove5515.setStationDir(new float[][]{{-0.5,1}, {-1,1}, {0,0.0001}, {0,0}});
+  remove5515.setGuideLineDist(new float[]{15, 10, 0, 0});
+  remove5515.setLineDistortion(new float[]{0, 0, 0, 0});
+  remove5515.setStrictness(new float[]{10, 5, 0, 0});///////////////////////////////////////////////////////////////////////////////////////////////
   
   
   envs.add(normal);
   envs.add(shuffled131115);
   envs.add(remove5515);
   
-  int selectedEnvIdx = 0;
+  int selectedEnvIdx = 1;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
@@ -90,18 +90,28 @@ void draw() {
     p.direction = p.velocity.copy().normalize();
   }
   for(Person p: ps){
-    p.estimate(ps);                       // get estimate path position ahead
+    if(p.fIdx != 3) p.estimate(ps);                       // get estimate path position ahead
   }
   for(Person p: ps){
-    p.validateForward();                  // validate forward Person is on the way of estimate path
+    if(p.fIdx != 3) p.validateForward();                  // validate forward Person is on the way of estimate path
   }
   for(Person p: ps){
-    p.findLastOfLineAndFollow(ps);          // find person(or station) who is in the last of line(certified or arrived). If found, set forward as him.
+    if(p.fIdx != 3) p.findLastOfLineAndFollow(ps);          // find person(or station) who is in the last of line(certified or arrived). If found, set forward as him.
   }
   for(Person p: ps){
-    p.applyBehaviors(ps);
+    if(p.fIdx != 3) p.applyBehaviors(ps);
+    else p.pedestBehaviors(ps);//////////////////////////////////////////////////////////////////////////////////////////////pedestrian
     p.run();
   }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  float stress = 0;
+  for(Person p: ps){
+    if(p.fIdx != 3) stress += p.stress;
+  }
+  fill(50);
+  text("Stress : ", width - 200, height - 50);
+  text(stress, width - 100, height - 50);
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 void mousePressed() {
@@ -131,6 +141,7 @@ void keyPressed() {
       }else{
         p.seen = true;
       }
+      p.seeStress = false;
     } 
   }
   if (key == '2') {
@@ -140,6 +151,7 @@ void keyPressed() {
       }else{
         p.seen = true;
       }
+      p.seeStress = false;
     } 
   }
   if (key == '3') {
@@ -149,12 +161,61 @@ void keyPressed() {
       }else{
         p.seen = true;
       }
+      p.seeStress = false;
     } 
   }
   if (key == '0') {
     for(Person p: ps){
         p.seen = true;
-      
+        p.seeStress = false;
     } 
   }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  if (key == '4') {
+    for(Person p: ps){
+      p.seen = true;
+      p.seeStress = true;
+    } 
+  }
+  if (key == '7') {
+    //ArrayList<Attractor> delete = new ArrayList<Attractor>();
+    //Attractor temp = stations.get(0);
+    //for(int i = 0; i < 5; i++) {
+    //  if(temp.backward != null) 
+    //}
+          if(stations.get(0).backward != null){
+          if(stations.get(0).backward.backward != null) {
+            stations.get(0).backward.backward.forward = null;
+            stations.get(0).backward.backward.certified = false;
+          }
+        ps.remove(stations.get(0).backward); 
+        stations.get(0).backward = null;
+      
+    }
+  }
+  if (key == '8') {
+    for(int i = 0; i < 1; i++) {
+      if(stations.get(1).backward != null){
+          if(stations.get(1).backward.backward != null) {
+            stations.get(1).backward.backward.forward = null;
+            stations.get(1).backward.backward.certified = false;
+          }
+        ps.remove(stations.get(1).backward); 
+        stations.get(1).backward = null;
+      }
+    }
+  }
+  if (key == '9') {
+    for(int i = 0; i < 1; i++) {
+      if(stations.get(2).backward != null){
+          if(stations.get(2).backward.backward != null) {
+            stations.get(2).backward.backward.forward = null;
+            stations.get(2).backward.backward.certified = false;
+          }
+        ps.remove(stations.get(2).backward); 
+        stations.get(2).backward = null;
+      }
+    }
+  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
