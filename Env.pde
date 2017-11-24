@@ -10,7 +10,7 @@ class Env{
   Env(int cnt){
     stationCnt = cnt;
     colors = new color[cnt];
-    color colormap[] = new color[]{color(255, 0, 0), color(0, 255, 0), color(0, 0, 255), color(255, 255, 0), color(255, 0, 255), color(0, 255, 255)};
+    color colormap[] = new color[]{color(255, 0, 0), color(0, 255, 0), color(0, 0, 255), color(200, 200, 200), color(255, 0, 255), color(0, 255, 255)};
     for(int i=0; i<cnt; i++){
       colors[i] = colormap[i];
     }

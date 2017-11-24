@@ -11,6 +11,7 @@ class Attractor {
   boolean debugged;
   float guideLineDist;
   float strictness;
+  float stress;
   int name;
   Attractor(){}
   Attractor(float x, float y){
