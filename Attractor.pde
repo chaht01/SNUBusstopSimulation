@@ -10,6 +10,7 @@ class Attractor {
   boolean isArriving;
   boolean debugged;
   float guideLineDist;
+  float strictness;
   int name;
   Attractor(){}
   Attractor(float x, float y){

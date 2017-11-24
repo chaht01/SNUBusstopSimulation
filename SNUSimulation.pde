@@ -17,29 +17,30 @@ void setup() {
   envs = new ArrayList<Env>();
   
   Env normal = new Env(3);
-  normal.setRatio(new float[]{0.3, 0.2, 0.5});
-  normal.setStationDir(new float[][]{{0,1}, {-0.5,1}, {-1,1}});
-  normal.setGuideLineDist(new float[]{15, 10, 5});
+  normal.setRatio(new float[]{0.4, 0.4, 0.2});
+  normal.setStationDir(new float[][]{{0,1}, {0,1}, {0,1}});
+  normal.setGuideLineDist(new float[]{5, 5, 5});
   normal.setLineDistortion(new float[]{0, 0, 0});
+  normal.setStrictness(new float[]{4, 4, 4});
   
-  Env shuffled = new Env(3);
-  shuffled.setRatio(new float[]{0.3, 0.2, 0.5});
-  shuffled.setStationDir(new float[][]{{0,1}, {-0.5,1}, {-1,1}});
-  shuffled.setGuideLineDist(new float[]{5, 10, 3});
-  shuffled.setLineDistortion(new float[]{0, 0, 0});
+  Env shuffled131115 = normal.copy();
+  shuffled131115.shuffle(new int[]{1, 0, 2});
+  shuffled131115.setStationDir(new float[][]{{0,1}, {-0.5,1}, {-1,1}});
+  shuffled131115.setGuideLineDist(new float[]{15, 10, 5});
   
   Env remove5515 = new Env(2);
   remove5515.setRatio(new float[]{0.3, 0.2});
   remove5515.setStationDir(new float[][]{{-0.5,1}, {-1,1}});
   remove5515.setGuideLineDist(new float[]{15, 10});
   remove5515.setLineDistortion(new float[]{0, 0});
+  remove5515.setStrictness(new float[]{10, 5, 3});
   
   
   envs.add(normal);
-  envs.add(shuffled);
+  envs.add(shuffled131115);
   envs.add(remove5515);
   
-  int selectedEnvIdx = 2;
+  int selectedEnvIdx = 0;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
@@ -47,16 +48,24 @@ void setup() {
     s.direction = selectedEnv.stationDir[i];
     s.lineDistortion = selectedEnv.lineDistortion[i];
     s.guideLineDist = selectedEnv.guideLineDist[i];
+    s.col = selectedEnv.colors[i];
+    s.strictness = selectedEnv.strictness[i];
     s.certified = true;
     s.isArriving = true;
+    
     stations.add(s);
   }
   
-  stations.get(0).col = color(255, 0, 0);
-  stations.get(1).col = color(0, 255, 0);
-  //stations.get(2).col = color(0, 0, 255);
   for(int i=0; i<25; i++){
-    ps.add(new Person(random(width*4/5, width), random(height/2, height), (int)random(selectedEnv.stationCnt), stations, i));
+    float r = random(1);
+    float rangeStart = 0;
+    for(int j=0; j<selectedEnv.personRatio.length; j++){
+      if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
+        ps.add(new Person(random(width*4/5, width), random(height/2, height), j, stations, i));
+      }
+      rangeStart+=selectedEnv.personRatio[j];
+    }
+    rangeStart = 0;
   }
   
   
@@ -101,8 +110,16 @@ void mousePressed() {
       p.debug = !p.debug;
     }
   } 
-  for(int i=0; i<20; i++){
-    ps.add(new Person(random(width*4/5, width), random(height/2, height), (int)random(selectedEnv.stationCnt), stations, i));
+  for(int i=0; i<25; i++){
+    float r = random(1);
+    float rangeStart = 0;
+    for(int j=0; j<selectedEnv.personRatio.length; j++){
+      if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
+        ps.add(new Person(random(width*4/5, width), random(height/2, height), j, stations, i));
+      }
+      rangeStart+=selectedEnv.personRatio[j];
+    }
+    rangeStart = 0;
   }
 }
 
