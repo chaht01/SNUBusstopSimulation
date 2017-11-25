@@ -14,7 +14,8 @@ int totalTick;
 int tick;
 int seconds;
 int peopleOutletCnt;
-int dispenseInterval;
+int dispenseIntervalMinutes;
+int dispenseIntervalTickx3;
 int dispenseTick;
 boolean triggerOutlet;
 
@@ -27,7 +28,8 @@ void setup() {
   tick = 0;
   seconds = 0;
   peopleOutletCnt = 0;
-  dispenseInterval = getDispenseInterval(6.0);//frame
+  dispenseIntervalMinutes = 6;
+  dispenseIntervalTickx3 = getDispenseInterval(dispenseIntervalMinutes);//frame
   dispenseTick = 0;
   triggerOutlet = true;
   size(1600, 350);
@@ -100,13 +102,13 @@ void draw() {
     tick%=60;
     seconds++;
   }
-  if(dispenseTick >dispenseInterval){
+  if(dispenseTick >dispenseIntervalTickx3){
     dispenseTick = 0;
     triggerOutlet = true;
   }
   if(triggerOutlet == true){
     //peopleOutletCnt += (int)(randomGaussian()*16+17)*6;
-    peopleOutletCnt += (int)(random(17*6, 50*6));
+    peopleOutletCnt += (int)(random(17*dispenseIntervalMinutes, 50*dispenseIntervalMinutes));
     triggerOutlet = false;
   }
   // People spend about 84ticks to go through unseen distance(4.625m)
