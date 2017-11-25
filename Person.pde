@@ -33,10 +33,10 @@ class Person extends Attractor {
     * Length of left ahead of 5515 station is 1.625m
     * The screen's expression range is 52m
     * Duration time of person who goes to 5511 station is 50sec
-    * Thus, v = (1.1/0.0325)px/sec = 101.53
-    * We'll use velocity x3 magnitude(v*3). 
+    * Thus, v = (1.1/0.0325)px/sec = 33.84
+    * We'll use velocity multiplied by systempSpeed magnitude(v*systemSpeed). 
    **/
-    maxspeed = (101.53/60.0)+random(-0.5, 0.5);
+    maxspeed = (33.84*systemSpeed/60.0)+random(-0.5, 0.5);
     maxforce = 0.1;
     stations = _stations;
     fIdx = _fIdx;

@@ -18,9 +18,10 @@ int dispenseIntervalMinutes;
 int dispenseIntervalTickx3;
 int dispenseTick;
 boolean triggerOutlet;
+float systemSpeed = 6.0;
 
 int getDispenseInterval(float dispenseInterval){
-  return (int)((dispenseInterval/3.0)*60*60);
+  return (int)((dispenseInterval/systemSpeed)*60*60);
 }
 void setup() {
   frameRate(60);
@@ -113,7 +114,7 @@ void draw() {
   }
   // People spend about 84ticks to go through unseen distance(4.625m)
   if(totalTick%84==0 && peopleOutletCnt>0){
-    int currOutlet = peopleOutletCnt>=20 ? 20 : peopleOutletCnt;
+    int currOutlet = peopleOutletCnt>=10 ? 10 : peopleOutletCnt;
     peopleOutletCnt -= currOutlet;
     for(int i=0; i<currOutlet; i++){
       float r = random(1);
