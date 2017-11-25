@@ -7,7 +7,7 @@ class Person extends Attractor {
   boolean[] found;
   boolean debug;
   boolean seen;
-  
+  boolean guessing;
   ArrayList<Attractor> stations;
   int fIdx;
   int tick;
@@ -19,7 +19,6 @@ class Person extends Attractor {
   boolean[] stressEn;
   int[] stressCnt;
   boolean seeStress;
-  boolean everCertified;
   
   
 
@@ -48,10 +47,11 @@ class Person extends Attractor {
     velocity = new PVector(0, 0);
     certified = false;
     found = new boolean[_stations.size()];
-    found[found.length-2] = true;
+    //found[found.length-2] = true;
     lineDistortion = random(follow.lineDistortion, follow.lineDistortion*2);
-    debug = false;
+    debug = true;
     seen = true;
+    guessing = false;
     
     
     stressEn = new boolean[] {true, true, true, true};
@@ -71,7 +71,7 @@ class Person extends Attractor {
   }
 
   void update() {
-    if (!certified || (everCertified && forward!=null && (PVector.dist(position, forward.position) > getIntervalSize()*4))) {
+    if (!certified || (everCertified && forward!=null && (PVector.dist(position, forward.position) > getIntervalSize()*3))) {
       // Update velocity
       velocity.add(acceleration);
       // Limit speed
@@ -95,8 +95,7 @@ class Person extends Attractor {
   }
 
   void applyBehaviors(ArrayList<Person> ps) {
-
-    if (!certified || (everCertified && forward!=null && (PVector.dist(position, forward.position) > getIntervalSize()*4))) {
+    if (!certified || (everCertified && forward!=null && (PVector.dist(position, forward.position) > getIntervalSize()*3))) {
       PVector separateForce = separate(ps);
       PVector arriveForce = arrive();
       separateForce.mult(2);
@@ -146,9 +145,12 @@ class Person extends Attractor {
           if (other!=this) {
             if (PVector.dist(other.position, station.position) < towardStation.mag()) {
               PVector towardOther = PVector.sub(other.position, position);
+              if(towardOther.mag() > towardStation.mag()){
+                continue;
+              }
               float theta = PVector.angleBetween(towardStation, towardOther);
               float dist = abs(towardOther.mag()*sin(theta));
-              if (dist < r*3) {
+              if (dist < getIntervalSize()) {
                 candidates.add(other);
               }
             }
@@ -158,6 +160,7 @@ class Person extends Attractor {
           found[i] = false;
         } else {
           found[i] = true;
+          guessing = false;
         }
 
         for (int j=candidates.size()-1; j>=0; j--) {
@@ -175,9 +178,9 @@ class Person extends Attractor {
           minDistCandidates[i] = min;
         } else {
           if (found[fIdx]) {
-            //text("-", position.x, position.y);
+            text("-", position.x, position.y);
           } else {
-            //text("+", position.x, position.y);
+            text("+", position.x, position.y);
           }
         }
       }
@@ -188,24 +191,56 @@ class Person extends Attractor {
       if (minDistCandidates[fIdx]!=null) {
         Attractor lastCertified = lastAttractorOfLine(minDistCandidates[fIdx]);
         if (lastCertified!=null) {
-          //tempLastCertified.col = color(255, 255, 0);
-          //println("1!");
           Attractor temp = lastCertified;
           boolean isAnotherLine = false;
+          float sightDistance = getIntervalSize()*4;
+          float periphery = PI/8;
           while (temp.forward!=null) {
-            temp = temp.forward;
-          }
-
-          for (int i=0; i<found.length; i++) {
-            if (i!=fIdx && found[i] && stations.get(i).equals(temp)) {
-              isAnotherLine = true;
+            println(temp.name+":"+((Person)temp).fIdx);
+            ArrayList<Attractor> similar = new ArrayList<Attractor>();
+            for (Person other : ps) {
+              if(other!=this){
+                // A vector that points to another boid and that angle
+                PVector comparison = PVector.sub(other.position, temp.position);
+          
+                // How far is it
+                float d = PVector.dist(temp.position, other.position);
+          
+                // What is the angle between the other boid and this one's current direction
+                float diff = PVector.angleBetween(comparison, velocity);
+          
+                // If it's within the periphery and close enough to see it
+                if (diff < periphery && d > 0 && d < sightDistance) {
+                  similar.add(other);
+                }
+              }
+              
+            }
+            if(similar.size()>0){
+              guessing = true;
               break;
+              //temp = similar.get((int)random(similar.size()));
+            }else{
+              temp = temp.forward;
+              guessing = false;
             }
           }
-          if (!isAnotherLine) {
-            found[fIdx] = true;
-            //col = color(255, 0, 255); //purple
-            setForward(lastAttractorOfLine(stations.get(fIdx)));
+          if(!guessing){
+            for (int i=0; i<found.length; i++) {
+              if (i!=fIdx && found[i] && stations.get(i).equals(temp)) {
+                isAnotherLine = true;
+                break;
+              }
+            }
+            if (!isAnotherLine) {
+              found[fIdx] = true;
+              guessing = false;
+              //col = color(255, 0, 255); //purple
+              setForward(lastAttractorOfLine(stations.get(fIdx)));
+            }
+          }else{
+            //do nothing.. only guessing.. 
+            //affect to estimate function 
           }
         }
       }
@@ -213,6 +248,7 @@ class Person extends Attractor {
       Attractor lastCertified = lastAttractorOfLine(stations.get(fIdx));
       if (lastCertified!=null) {
         //col = color(0, 255, 255); //cyan
+        guessing = false;
         setForward(lastCertified);
         //println("3#");
       } else {
@@ -343,6 +379,9 @@ class Person extends Attractor {
     //direction = forward.direction.copy();  //set direction
     if (!forward.equals(stations.get(fIdx))) {
       direction = forward.velocity.copy().normalize().rotate(lineDistortion);  //set direction
+      if (direction.heading()<0) {
+        direction = new PVector(-1, 0);
+      }
       velocity = direction.copy();
       maxspeed = 1.0;
     } else {
@@ -383,18 +422,21 @@ class Person extends Attractor {
     float intervalSize = getIntervalSize();
     Attractor tempTarget = new Attractor();
     int cnt = found[fIdx] ? (int)stations.get(fIdx).guideLineDist : (int)stations.get(fIdx).guideLineDist+5;  //11.24
-    tempTarget = lastAttractorOfLine(stations.get(fIdx)).copy();
-
-
-    for (int i=0; i<cnt; i++) {
-      tempTarget.position = PVector.sub(tempTarget.position, tempTarget.direction.copy().normalize().setMag(intervalSize));
-      tempTarget.direction = tempTarget.direction.copy().normalize().rotate(lineDistortion);  //set direction
-      if (tempTarget.direction.heading()<0) {
-        tempTarget.direction = new PVector(-1, 0);
-      }
-      
-      if (PVector.dist(position, tempTarget.position) < stations.get(fIdx).strictness*intervalSize) {
-        break;
+    tempTarget = (!found[fIdx] && guessing) ? stations.get(fIdx).copy() : lastAttractorOfLine(stations.get(fIdx)).copy();
+    if(!found[fIdx] && guessing){
+      tempTarget.position.x +=100;
+      //tempTarget.position.y +=50;
+    }else{
+      for (int i=0; i<cnt; i++) {
+        tempTarget.position = PVector.sub(tempTarget.position, tempTarget.direction.copy().normalize().setMag(intervalSize));
+        tempTarget.direction = tempTarget.direction.copy().normalize().rotate(lineDistortion);  //set direction
+        if (tempTarget.direction.heading()<0) {
+          tempTarget.direction = new PVector(-1, 0);
+        }
+        
+        if (PVector.dist(position, tempTarget.position) < stations.get(fIdx).strictness*intervalSize) {
+          break;
+        }
       }
     }
 
@@ -418,11 +460,32 @@ class Person extends Attractor {
   // STEER = DESIRED MINUS VELOCITY
   PVector arrive() {
     float intervalSize = getIntervalSize();
-    Attractor _target = forward==null ? estimateTarget : forward;
+    Attractor _target;
+    PVector targetDir;
+    PVector target;
+    if(everForward!=null && forward!=null && PVector.dist(everForward.position, forward.position)<3*intervalSize){
+      _target = everForward;
+      targetDir = _target.direction.copy();
+      target = _target.position.copy();
+    }else{
+        _target = forward!=null ? forward: estimateTarget;
+        targetDir = _target.direction.copy().rotate(lineDistortion);
+        if (targetDir.heading()<0) {
+          targetDir = new PVector(-1, 0);
+        }
+        if(!guessing){
+          target = PVector.sub(_target.position, targetDir.setMag(2*intervalSize));
+        }else{
+          target = _target.position;
+        }
+    }
     
-    PVector target = PVector.sub(_target.position, _target.direction.copy().rotate(lineDistortion).setMag(2*intervalSize));
+    
+    
+    
     //PVector target = _target.position;
-    float arriveDistance = map(systemSpeed, 1, 12, 4, 48)*intervalSize; //40
+    float arriveDistance = 4*intervalSize; //40
+    //float arriveDistance = map(systemSpeed, 1, 12, 4, 24)*intervalSize; //40
     //arriveDistance = constrain(arriveDistance, intervalSize, stations.get(fIdx).strictness*intervalSize);
     PVector desired = PVector.sub(target, position);  // A vector pointing from the position to the target
     float d = desired.mag();

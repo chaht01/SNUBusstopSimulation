@@ -6,13 +6,16 @@ class Attractor {
   float lineDistortion;
   Attractor forward;
   Attractor backward;
+  Attractor everForward;
   boolean certified;
+  boolean everCertified;
   boolean isArriving;
   boolean debugged;
   float guideLineDist;
   float strictness;
   float stress;
   int name;
+  boolean busStopped;
   Attractor(){}
   Attractor(float x, float y){
     position = new PVector(x, y);
@@ -20,8 +23,11 @@ class Attractor {
     velocity = new PVector(0, 0);
     forward = null;
     backward = null;
+    everForward = null;
     certified = false;
+    everCertified = false;
     isArriving = false;
+    busStopped = false;
     name = -1;
   }
   Attractor(float x, float y, int _n){
@@ -30,8 +36,11 @@ class Attractor {
     velocity = new PVector(0, 0);
     forward = null;
     backward = null;
+    everForward = null;
     certified = false;
+    everCertified = false;
     isArriving = false;
+    busStopped = false;
     name = _n;
   }
   void display(){

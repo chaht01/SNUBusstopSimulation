@@ -18,7 +18,7 @@ int dispenseIntervalMinutes;
 int dispenseIntervalTickx3;
 int dispenseTick;
 boolean triggerOutlet;
-float systemSpeed = 6.0;
+float systemSpeed = 6;
 
 int getDispenseInterval(float dispenseInterval){
   return (int)((dispenseInterval/systemSpeed)*60*60);
@@ -41,12 +41,11 @@ void setup() {
   
   Env normal = new Env(4);
   normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
-  //normal.setRatio(new float[]{0.4, 0.4, 0.2, 0});
   normal.setInterval(new float[]{50,450,850,-10});
-  normal.setStationDir(new float[][]{{-4,1}, {-4,1}, {-10,1}, {0,0}});
+  normal.setStationDir(new float[][]{{-1,1}, {-1,1}, {-1,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
-  normal.setLineDistortion(new float[]{0, 0, 0, 0});
-  normal.setStrictness(new float[]{4, 4, 4, 0});
+  normal.setLineDistortion(new float[]{PI/180, PI/180, PI/180, 0});
+  normal.setStrictness(new float[]{12, 12, 12, 0});
   
   Env shuffled151113 = normal.copy();
   shuffled151113.shuffle(new int[]{2, 0, 1, 3});
@@ -72,14 +71,20 @@ void setup() {
   Env moved2 = normal.copy();
   moved2.setInterval(new float[]{50,650,850,-10});
   
+  Env guideLined = normal.copy();
+  guideLined.setStationDir(new float[][]{{0,1}, {-0,5,1}, {-0.75,1}, {0,0}});
+  guideLined.setGuideLineDist(new float[]{50, 25, 5, 0});
+  guideLined.setLineDistortion(new float[]{4*PI/180, 5*PI/180, 6*PI/180, PI/180});
+  
   envs.add(normal);
   envs.add(shuffled151113);
   envs.add(shuffled111513);
   envs.add(remove5515);
   envs.add(moved1);
   envs.add(moved2);
+  envs.add(guideLined);
   
-  int selectedEnvIdx = 4;
+  int selectedEnvIdx = 0;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
@@ -259,27 +264,40 @@ void keyPressed() {
    * ride on the bus
    */
   if (key == '7') {
-        if(stations.get(0).backward != null){
-          Attractor delPerson = stations.get(0).backward;
-          if(delPerson.backward != null) {
-            delPerson.backward.forward = stations.get(0);
-            stations.get(0).backward = delPerson.backward;
-          }
-          else if(delPerson.backward == null) stations.get(0).backward = null;
-        stressPool += delPerson.stress;
-        ps.remove(delPerson);
-        delPerson = null;
+      stations.get(0).busStopped = true;
+      if(stations.get(0).backward != null){
+        stations.get(0).busStopped = true;
+      Attractor delPerson = stations.get(0).backward;
+      Attractor pointer = delPerson;
+        while(pointer.backward!=null && pointer.backward.everCertified){
+        pointer.backward.everForward = pointer.copy();
+        pointer = pointer.backward;
+      }
+      if(delPerson.backward != null) {
+        delPerson.backward.forward = stations.get(0);
+        stations.get(0).backward = delPerson.backward;
+      }
+      else if(delPerson.backward == null) stations.get(0).backward = null;
+      stressPool += delPerson.stress;
+      ps.remove(delPerson);
+      delPerson = null;
       
     }
   }
   if (key == '8') {
     if(stations.get(1).backward != null){
-          Attractor delPerson = stations.get(1).backward;
-          if(delPerson.backward != null) {
-            delPerson.backward.forward = stations.get(1);
-            stations.get(1).backward = delPerson.backward;
-          }
-          else if(delPerson.backward == null) stations.get(1).backward = null;
+        stations.get(1).busStopped = true;
+        Attractor delPerson = stations.get(1).backward;
+        Attractor pointer = delPerson;
+      while(pointer.backward!=null && pointer.backward.everCertified){
+        pointer.backward.everForward = pointer.copy();
+        pointer = pointer.backward;
+      }
+        if(delPerson.backward != null) {
+          delPerson.backward.forward = stations.get(1);
+          stations.get(1).backward = delPerson.backward;
+        }
+        else if(delPerson.backward == null) stations.get(1).backward = null;
         stressPool += delPerson.stress;
         ps.remove(delPerson);
         delPerson = null;
@@ -287,15 +305,20 @@ void keyPressed() {
   }
   if (key == '9') {
     if(stations.get(2).backward != null){
-          Attractor delPerson = stations.get(2).backward;
-          if(delPerson.backward != null) {
-            delPerson.backward.forward = stations.get(2);
-            stations.get(2).backward = delPerson.backward;
-          }
-          else if(delPerson.backward == null) stations.get(2).backward = null;
-        stressPool += delPerson.stress;
-        ps.remove(delPerson);
-        delPerson = null;
+      Attractor delPerson = stations.get(2).backward;
+      Attractor pointer = delPerson;
+      while(pointer.backward!=null && pointer.backward.everCertified){
+        pointer.backward.everForward = pointer.copy();
+        pointer = pointer.backward;
+      }
+      if(delPerson.backward != null) {
+        delPerson.backward.forward = stations.get(2);
+        stations.get(2).backward = delPerson.backward;
+      }
+      else if(delPerson.backward == null) stations.get(2).backward = null;
+      stressPool += delPerson.stress;
+      ps.remove(delPerson);
+      delPerson = null;
     }
   }
   
