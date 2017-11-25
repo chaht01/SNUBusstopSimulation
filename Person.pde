@@ -37,7 +37,7 @@ class Person extends Attractor {
     * We'll use velocity multiplied by systempSpeed magnitude(v*systemSpeed). 
    **/
     maxspeed = (33.84*systemSpeed/60.0)+random(-0.5, 0.5);
-    maxforce = 0.1;
+    maxforce = map(systemSpeed, 1, 12, 0.1, 1.2);
     stations = _stations;
     fIdx = _fIdx;
     follow = stations.get(fIdx);
@@ -422,7 +422,7 @@ class Person extends Attractor {
     
     PVector target = PVector.sub(_target.position, _target.direction.copy().rotate(lineDistortion).setMag(2*intervalSize));
     //PVector target = _target.position;
-    float arriveDistance = 4*intervalSize; //40
+    float arriveDistance = map(systemSpeed, 1, 12, 4, 48)*intervalSize; //40
     //arriveDistance = constrain(arriveDistance, intervalSize, stations.get(fIdx).strictness*intervalSize);
     PVector desired = PVector.sub(target, position);  // A vector pointing from the position to the target
     float d = desired.mag();
