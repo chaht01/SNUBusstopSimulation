@@ -61,7 +61,7 @@ class Person extends Attractor {
   }
 
   void update() {
-    if (!certified) {
+    if (!certified || (everCertified && forward!=null && (PVector.dist(position, forward.position) > getIntervalSize()*4))) {
       // Update velocity
       velocity.add(acceleration);
       // Limit speed
@@ -86,13 +86,7 @@ class Person extends Attractor {
 
   void applyBehaviors(ArrayList<Person> ps) {
 
-    if (forward!=null) {
-      if (PVector.dist(position, forward.position) > r*3) certified = false;
-    } else {
-      if (PVector.dist(position, estimateTarget.position) > r*3) certified = false;
-    }
-
-    if (!certified) {
+    if (!certified || (everCertified && forward!=null && (PVector.dist(position, forward.position) > getIntervalSize()*4))) {
       PVector separateForce = separate(ps);
       PVector arriveForce = arrive();
       separateForce.mult(2);
@@ -124,72 +118,7 @@ class Person extends Attractor {
     }
   }
 
-  void followPersonInTrackOfEstimate(ArrayList<Person> ps) {
-    if (!found[fIdx]) {
-      float boundaryOffset = 20;
-      PVector estimatePath = PVector.sub(estimateTarget.position, position).normalize();
-      ArrayList<Attractor> candidates = new ArrayList<Attractor>();
-      for (Person other : ps) {
-        if (other!=this) {
-          if (PVector.dist(other.position, estimateTarget.position) < boundaryOffset) {
-            PVector betweenDir = other.velocity.copy().normalize();
-            float angle = PVector.angleBetween(PVector.sub(estimatePath, position), betweenDir);
-            if (angle < 2*PI/180) {
-              candidates.add(other);
-            }
-          }
-        }
-      }
-
-      if (candidates.size()>0) {
-        Attractor min = candidates.get(0);
-        for (Attractor c : candidates) {
-          if (PVector.dist(min.position, position) > PVector.dist(c.position, position)) {
-            min = c;
-          }
-        }
-        if (backward!=null) {
-          backward.forward = null;
-          backward = null;
-        }
-        if (forward!=null) {
-          forward.backward = null;
-          forward = null;
-        }
-
-        setForward(min);
-        min.debugged = true;
-      }
-    }
-  }
-  void findStation(ArrayList<Person> ps) {
-    for (int i=0; i<found.length; i++) {
-      if (found[i]) {
-        continue;
-      } else {
-        Attractor station = stations.get(i);
-        PVector towardStation = PVector.sub(station.position, position);
-        ArrayList<Attractor> candidates = new ArrayList<Attractor>();
-        for (Person other : ps) {
-          if (other!=this) {
-            if (PVector.dist(other.position, station.position) < towardStation.mag()) {
-              PVector towardOther = PVector.sub(other.position, position);
-              float theta = PVector.angleBetween(towardStation, towardOther);
-              float dist = abs(towardOther.mag()*sin(theta));
-              if (dist < r*3) {
-                candidates.add(other);
-              }
-            }
-          }
-        }
-        if (candidates.size()>0) {
-          found[i] = false;
-        } else {
-          found[i] = true;
-        }
-      }
-    }
-  }
+  
   void findLastOfLineAndFollow(ArrayList<Person> ps) {
     Attractor[] minDistCandidates = new Attractor[stations.size()];
     for(int i=0; i<stations.size(); i++){
@@ -267,18 +196,6 @@ class Person extends Attractor {
             //col = color(255, 0, 255); //purple
             setForward(lastAttractorOfLine(stations.get(fIdx)));
           }
-        } else {
-          //setForward(lastCertified);
-          //println("1");
-        }
-      } else {
-        Attractor lastCertified = lastAttractorOfLine(stations.get(fIdx));
-        if (lastCertified!=null) {
-          //col = color(255, 255, 0); //yellow
-          //println("2@");
-          //setForward(lastCertified);
-        } else {
-          //println("2");
         }
       }
     } else {
@@ -304,7 +221,7 @@ class Person extends Attractor {
       tempTarget = attr.copy();
       float distBWpath = PVector.dist(position, tempTarget.position);
       boolean skip = false;
-      int iterCnt = 0;
+      
       float maximumDist = 1.5*intervalSize; //critical to bottle neck 11.24, lower than 2 is proper.
       while (true) {
         //float maximumDist = map(iterCnt, 0, 20, 1.5, 50)*intervalSize; //critical to bottle neck 11.24, lower than 2 is proper.
@@ -323,7 +240,7 @@ class Person extends Attractor {
         } else {
           rect(tempTarget.position.x, tempTarget.position.y, 5, 5);
           distBWpath = PVector.dist(position, tempTarget.position);
-          iterCnt++;
+          
         }
       }
       if (!skip) {
@@ -416,8 +333,11 @@ class Person extends Attractor {
     if (!forward.equals(stations.get(fIdx))) {
       direction = forward.velocity.copy().normalize().rotate(lineDistortion);  //set direction
       velocity = direction.copy();
+      maxspeed = 1.0;
     } else {
       direction = velocity.copy().normalize();
+      velocity = velocity.normalize();
+      maxspeed = 1.0;
     }
     
     Attractor temp = forward;

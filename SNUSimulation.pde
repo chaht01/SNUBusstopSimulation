@@ -18,7 +18,8 @@ void setup() {
   envs = new ArrayList<Env>();
   
   Env normal = new Env(4);
-  normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
+  //normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
+  normal.setRatio(new float[]{0.4, 0.4, 0.2, 0});
   normal.setStationDir(new float[][]{{-1,1}, {-1,1}, {-5,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
   normal.setLineDistortion(new float[]{0, 0, 0, 0});
@@ -57,7 +58,7 @@ void setup() {
     stations.add(s);
   }
   
-  for(int i=0; i<25; i++){
+  for(int i=0; i<30; i++){
     float r = random(1);
     float rangeStart = 0;
     for(int j=0; j<selectedEnv.personRatio.length; j++){
@@ -103,10 +104,10 @@ void draw() {
     if(p.fIdx != 3) p.estimate(ps);                       // get estimate path position ahead
   }
   for(Person p: ps){
-    if(p.fIdx != 3) p.validateForward();                  // validate forward Person is on the way of estimate path
+    if(p.fIdx != 3 && !p.everCertified) p.validateForward();                  // validate forward Person is on the way of estimate path
   }
   for(Person p: ps){
-    if(p.fIdx != 3) p.findLastOfLineAndFollow(ps);          // find person(or station) who is in the last of line(certified or arrived). If found, set forward as him.
+    if(p.fIdx != 3 && !p.everCertified) p.findLastOfLineAndFollow(ps);          // find person(or station) who is in the last of line(certified or arrived). If found, set forward as him.
   }
   for(Person p: ps){
     if(p.fIdx != 3) p.applyBehaviors(ps);
@@ -177,47 +178,45 @@ void keyPressed() {
       p.seeStress = true;
     } 
   }
+  
+  /**
+   * ride on the bus
+   */
   if (key == '7') {
-    //ArrayList<Attractor> delete = new ArrayList<Attractor>();
-    //Attractor temp = stations.get(0);
-    //for(int i = 0; i < 5; i++) {
-    //  if(temp.backward != null) 
-    //}
         if(stations.get(0).backward != null){
-          if(stations.get(0).backward.backward != null) {
-            stations.get(0).backward.backward.forward = null;
-            stations.get(0).backward.backward.certified = false;
+          Attractor delPerson = stations.get(0).backward;
+          if(delPerson.backward != null) {
+            delPerson.backward.forward = stations.get(0);
+            stations.get(0).backward = delPerson.backward;
           }
-        stressPool += stations.get(0).backward.stress;
-        ps.remove(stations.get(0).backward); 
-        stations.get(0).backward = null;
+        stressPool += delPerson.stress;
+        ps.remove(delPerson);
+        delPerson = null;
       
     }
   }
   if (key == '8') {
-    for(int i = 0; i < 1; i++) {
-      if(stations.get(1).backward != null){
-          if(stations.get(1).backward.backward != null) {
-            stations.get(1).backward.backward.forward = null;
-            stations.get(1).backward.backward.certified = false;
+    if(stations.get(1).backward != null){
+          Attractor delPerson = stations.get(1).backward;
+          if(delPerson.backward != null) {
+            delPerson.backward.forward = stations.get(1);
+            stations.get(1).backward = delPerson.backward;
           }
-        stressPool += stations.get(0).backward.stress;
-        ps.remove(stations.get(1).backward); 
-        stations.get(1).backward = null;
-      }
+        stressPool += delPerson.stress;
+        ps.remove(delPerson);
+        delPerson = null;
     }
   }
   if (key == '9') {
-    for(int i = 0; i < 1; i++) {
-      if(stations.get(2).backward != null){
-          if(stations.get(2).backward.backward != null) {
-            stations.get(2).backward.backward.forward = null;
-            stations.get(2).backward.backward.certified = false;
+    if(stations.get(2).backward != null){
+          Attractor delPerson = stations.get(2).backward;
+          if(delPerson.backward != null) {
+            delPerson.backward.forward = stations.get(2);
+            stations.get(2).backward = delPerson.backward;
           }
-        stressPool += stations.get(0).backward.stress;
-        ps.remove(stations.get(2).backward); 
-        stations.get(2).backward = null;
-      }
+        stressPool += delPerson.stress;
+        ps.remove(delPerson);
+        delPerson = null;
     }
   }
   
