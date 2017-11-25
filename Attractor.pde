@@ -16,6 +16,7 @@ class Attractor {
   float stress;
   int name;
   boolean busStopped;
+  boolean isReady;
   Attractor(){}
   Attractor(float x, float y){
     position = new PVector(x, y);

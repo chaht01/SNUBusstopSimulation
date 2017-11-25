@@ -7,6 +7,10 @@ class Env{
   float lineDistortion[];
   color colors[];
   float strictness[];
+  int accomodate[];
+  int ticks[];
+  boolean triggerRide[];
+  int marginalTick[];
   
   Env(int cnt){
     stationCnt = cnt;
@@ -14,6 +18,16 @@ class Env{
     color colormap[] = new color[]{color(255, 0, 0), color(0, 255, 0), color(0, 0, 255), color(200, 200, 200), color(255, 0, 255), color(0, 255, 255)};
     for(int i=0; i<cnt; i++){
       colors[i] = colormap[i];
+    }
+    ticks = new int[cnt];
+    triggerRide = new boolean[cnt];
+    accomodate = new int[cnt];
+    marginalTick = new int[cnt];
+    for(int i=0; i<cnt; i++){
+      ticks[i] = 0;
+      triggerRide[i] = false;
+      accomodate[i] = 0;
+      marginalTick[i] = 0;
     }
   }
   void setRatio(float a[]){
@@ -36,6 +50,12 @@ class Env{
   }
   void setStrictness(float a[]){
     strictness = a;
+  }
+  void setMarginalTick(int a[]){
+    marginalTick = a;
+  }
+  void setStartTick(int a[]){
+    ticks = a;
   }
   Env copy(){
     Env ret = new Env(stationCnt);

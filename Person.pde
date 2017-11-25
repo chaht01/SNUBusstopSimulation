@@ -49,7 +49,7 @@ class Person extends Attractor {
     found = new boolean[_stations.size()];
     //found[found.length-2] = true;
     lineDistortion = random(follow.lineDistortion, follow.lineDistortion*2);
-    debug = true;
+    debug = false;
     seen = true;
     guessing = false;
     
@@ -80,6 +80,10 @@ class Person extends Attractor {
       position.add(velocity);
       // Reset accelerationelertion to 0 each cycle
       acceleration.mult(0);
+    }else{
+      if(forward!=null && forward.equals(stations.get(fIdx))){
+        stations.get(fIdx).isReady = true;
+      }
     }
     
     
@@ -196,7 +200,6 @@ class Person extends Attractor {
           float sightDistance = getIntervalSize()*4;
           float periphery = PI/8;
           while (temp.forward!=null) {
-            println(temp.name+":"+((Person)temp).fIdx);
             ArrayList<Attractor> similar = new ArrayList<Attractor>();
             for (Person other : ps) {
               if(other!=this){

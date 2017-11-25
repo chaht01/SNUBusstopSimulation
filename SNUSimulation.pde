@@ -13,16 +13,36 @@ float stressPool;
 int totalTick;
 int tick;
 int seconds;
+
 int peopleOutletCnt;
 int dispenseIntervalMinutes;
-int dispenseIntervalTickx3;
+int dispenseIntervalTickMulted;
 int dispenseTick;
+
+int interval5515Minutes;
+int interval5513Minutes;
+int interval5511Minutes;
+int interval5515MinutesTickMulted;
+int interval5513MinutesTickMulted;
+int interval5511MinutesTickMulted;
+int tick5515;
+int tick5513;
+int tick5511;
+
 boolean triggerOutlet;
+boolean trigger5515;
+boolean trigger5513;
+boolean trigger5511;
+
+int people5515Cnt;
+int people5513Cnt;
+int people5511Cnt;
+
 float systemSpeed = 6;
 
 
-int getDispenseInterval(float dispenseInterval){
-  return (int)((dispenseInterval/systemSpeed)*60*60);
+int minutesToTicks(float minute){
+  return (int)((minute/systemSpeed)*60*60);
 }
 void setup() {
   frameRate(60);
@@ -31,7 +51,18 @@ void setup() {
   seconds = 0;
   peopleOutletCnt = 0;
   dispenseIntervalMinutes = 6;
-  dispenseIntervalTickx3 = getDispenseInterval(dispenseIntervalMinutes);//frame
+  dispenseIntervalTickMulted = minutesToTicks(dispenseIntervalMinutes);//frame
+  
+  tick5515 = 0;
+  tick5513 = 0;
+  tick5511 = 0;
+  interval5515Minutes = 5;
+  interval5513Minutes = 7;
+  interval5511Minutes = 7;
+  interval5515MinutesTickMulted = minutesToTicks(interval5515Minutes);
+  interval5513MinutesTickMulted = minutesToTicks(interval5513Minutes);
+  interval5511MinutesTickMulted = minutesToTicks(interval5511Minutes);
+  
   dispenseTick = 0;
   triggerOutlet = true;
   size(1600, 350);
@@ -43,10 +74,12 @@ void setup() {
   Env normal = new Env(4);
   normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
   normal.setInterval(new float[]{50,450,850,-10});
-  normal.setStationDir(new float[][]{{-4,1}, {-5,1}, {-10,1}, {0,0}});
+  normal.setStationDir(new float[][]{{-1,1}, {-1,1}, {-1,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
   normal.setLineDistortion(new float[]{PI/180, PI/180, PI/180, 0});
   normal.setStrictness(new float[]{12, 12, 12, 0});
+  normal.setStartTick(new int[]{minutesToTicks(1), minutesToTicks(2), minutesToTicks(1), minutesToTicks(100)});
+  normal.setMarginalTick(new int[]{minutesToTicks(7), minutesToTicks(7), minutesToTicks(5), minutesToTicks(1000)});
   
   Env shuffled151113 = normal.copy();
   shuffled151113.shuffle(new int[]{2, 0, 1, 3});
@@ -109,12 +142,15 @@ void draw() {
     tick%=60;
     seconds++;
   }
-  if(dispenseTick >dispenseIntervalTickx3){
+  
+  /**
+   *  Subway dispense time events
+   **/
+  if(dispenseTick >dispenseIntervalTickMulted){
     dispenseTick = 0;
     triggerOutlet = true;
   }
   if(triggerOutlet == true){
-    //peopleOutletCnt += (int)(randomGaussian()*16+17)*6;
     peopleOutletCnt += (int)(random(17*dispenseIntervalMinutes, 50*dispenseIntervalMinutes));
     triggerOutlet = false;
   }
@@ -134,9 +170,39 @@ void draw() {
       rangeStart = 0;
     }
   }
+  
+  
+  /**
+   * Bus stop dispense time event
+   **/
+   for(int i=0; i<selectedEnv.stationCnt; i++){
+     if(selectedEnv.ticks[i] > selectedEnv.marginalTick[i]){
+       selectedEnv.ticks[i] = 0;
+       selectedEnv.triggerRide[i] = true;
+     }
+     if(selectedEnv.triggerRide[i]){
+       
+       selectedEnv.accomodate[i] += (int)random(15,25);
+       selectedEnv.triggerRide[i] = false;
+     }
+     if(stations.get(i).backward==null || !stations.get(i).backward.everCertified){
+       selectedEnv.accomodate[i] =0;
+     }else{
+       if(selectedEnv.accomodate[i]>0 && stations.get(i).isReady){
+         stations.get(i).isReady = false;
+          riding(i);
+          selectedEnv.accomodate[i]--;
+       }
+     }
+     selectedEnv.ticks[i]++;
+   }
+  
+  
+  
   tick++;
   dispenseTick++;
   totalTick++;
+  
   
   
   text(frameRate, width-60, 30);
@@ -198,23 +264,24 @@ void draw() {
   }
 }
 
-void mousePressed() {
-  //for(Person p: ps){
-  //  if(abs(p.position.x - mouseX)<10 && abs(p.position.y-mouseY)<10){
-  //    p.debug = !p.debug;
-  //  }
-  //} 
-  //for(int i=0; i<10; i++){
-  //  float r = random(1);
-  //  float rangeStart = 0;
-  //  for(int j=0; j<selectedEnv.personRatio.length; j++){
-  //    if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
-  //      ps.add(new Person(random(width-150, width), random(height/3, height-50), j, stations, i));
-  //    }
-  //    rangeStart+=selectedEnv.personRatio[j];
-  //  }
-  //  rangeStart = 0;
-  //}
+void riding(int stationIdx){
+  if(stations.get(stationIdx).backward != null){
+      Attractor delPerson = stations.get(stationIdx).backward;
+      Attractor pointer = delPerson;
+        while(pointer.backward!=null && pointer.backward.everCertified){
+        pointer.backward.everForward = pointer.copy();
+        pointer = pointer.backward;
+      }
+      if(delPerson.backward != null) {
+        delPerson.backward.forward = stations.get(stationIdx);
+        stations.get(stationIdx).backward = delPerson.backward;
+      }
+      else if(delPerson.backward == null) stations.get(stationIdx).backward = null;
+      stressPool += delPerson.stress;
+      ps.remove(delPerson);
+      delPerson = null;
+      
+    }
 }
 
 void keyPressed() {
@@ -265,9 +332,9 @@ void keyPressed() {
    * ride on the bus
    */
   if (key == '7') {
-      stations.get(0).busStopped = true;
+      
       if(stations.get(0).backward != null){
-        stations.get(0).busStopped = true;
+      
       Attractor delPerson = stations.get(0).backward;
       Attractor pointer = delPerson;
         while(pointer.backward!=null && pointer.backward.everCertified){
