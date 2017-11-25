@@ -18,7 +18,7 @@ int dispenseIntervalMinutes;
 int dispenseIntervalTickx3;
 int dispenseTick;
 boolean triggerOutlet;
-float systemSpeed = 6.0;
+float systemSpeed = 3.0;
 
 int getDispenseInterval(float dispenseInterval){
   return (int)((dispenseInterval/systemSpeed)*60*60);
@@ -43,7 +43,7 @@ void setup() {
   normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
   //normal.setRatio(new float[]{0.4, 0.4, 0.2, 0});
   normal.setInterval(new float[]{50,450,850,-10});
-  normal.setStationDir(new float[][]{{-4,1}, {-4,1}, {-10,1}, {0,0}});
+  normal.setStationDir(new float[][]{{-4,1}, {-5,1}, {-10,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
   normal.setLineDistortion(new float[]{0, 0, 0, 0});
   normal.setStrictness(new float[]{4, 4, 4, 0});
@@ -79,7 +79,7 @@ void setup() {
   envs.add(moved1);
   envs.add(moved2);
   
-  int selectedEnvIdx = 4;
+  int selectedEnvIdx = 0;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){

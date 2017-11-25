@@ -612,7 +612,7 @@ class Person extends Attractor {
   }
   
   void setStress(){
-    stress = stressCnt[0]*0.1 + stressCnt[1]*0.1 + stressCnt[2]*50 + stressCnt[3]*10;// **************adjust constant
+    stress = stressCnt[0]*0.1 + stressCnt[1]*0.1 + stressCnt[2]*50 + stressCnt[3]*5;// **************adjust constant
   }
   
   void setStressEn(){
@@ -640,7 +640,7 @@ class Person extends Attractor {
       for (Person p : ps) {
         float d = PVector.dist(position, p.position);
         float desiredseparation = getIntervalSize()*2;
-        if(p != this && d > 0 && d < desiredseparation && p.everCertified == true) {
+        if(p != this && d > 0 && d < desiredseparation && p.everCertified == true && p.fIdx != fIdx) {
           stressCnt[3]++;
         }
       }
