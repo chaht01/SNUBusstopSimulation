@@ -10,16 +10,33 @@ ArrayList<Attractor> stations;
 ArrayList<Env> envs;
 Env selectedEnv;
 float stressPool;
+int totalTick;
+int tick;
+int seconds;
+int peopleOutletCnt;
+int dispenseInterval;
+boolean triggerOutlet;
 
+int getDispenseInterval(float dispenseInterval){
+  return (int)((dispenseInterval/3)*60*60);
+}
 void setup() {
+  frameRate(60);
+  totalTick = 0;
+  tick = 0;
+  seconds = 0;
+  peopleOutletCnt = 0;
+  dispenseInterval = getDispenseInterval(3);//frame
+  triggerOutlet = true;
   size(1600, 350);
+  
   ps = new ArrayList<Person>();
   stations = new ArrayList<Attractor>();
   envs = new ArrayList<Env>();
   
   Env normal = new Env(4);
-  //normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
-  normal.setRatio(new float[]{0.4, 0.4, 0.2, 0});
+  normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
+  //normal.setRatio(new float[]{0.4, 0.4, 0.2, 0});
   normal.setStationDir(new float[][]{{-3,1}, {-4,1}, {-5,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
   normal.setLineDistortion(new float[]{0, 0, 0, 0});
@@ -58,23 +75,48 @@ void setup() {
     stations.add(s);
   }
   
-  for(int i=0; i<20; i++){
-    float r = random(1);
-    float rangeStart = 0;
-    for(int j=0; j<selectedEnv.personRatio.length; j++){
-      if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
-        ps.add(new Person(random(width*5/6, width), random(height/3, height-50), j, stations, i));
-      }
-      rangeStart+=selectedEnv.personRatio[j];
-    }
-    rangeStart = 0;
-  }
-  
-  
+
 }
 
 void draw() {
   background(255);
+  if(tick/60>=1){
+    tick%=60;
+    seconds++;
+  }
+  if(totalTick%dispenseInterval==0){
+    triggerOutlet = true;
+  }
+  if(triggerOutlet == true){
+    peopleOutletCnt += (int)(randomGaussian()*16+17)*7;
+    triggerOutlet = false;
+  }
+  // People spend about 84ticks to go through unseen distance(4.625m)
+  if(totalTick%84==0 && peopleOutletCnt>0){
+    int currOutlet = peopleOutletCnt>=20 ? 20 : peopleOutletCnt;
+    peopleOutletCnt -= currOutlet;
+    for(int i=0; i<currOutlet; i++){
+      float r = random(1);
+      float rangeStart = 0;
+      for(int j=0; j<selectedEnv.personRatio.length; j++){
+        if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
+          ps.add(new Person(random(width*5/6, width), random(height/3, height-50), j, stations, i));
+        }
+        rangeStart+=selectedEnv.personRatio[j];
+      }
+      rangeStart = 0;
+    }
+  }
+  tick++;
+  totalTick++;
+  
+  
+  text(frameRate, width-60, 30);
+  text(seconds, width-60, 60);
+  
+  
+  
+  
   PVector mouse = new PVector(mouseX, mouseY);
 
   // Draw an ellipse at the mouse position
@@ -96,6 +138,18 @@ void draw() {
   textSize(10);
   
   // Call the appropriate steering behaviors for our agents
+  ArrayList<Person> toRemove = new ArrayList<Person>();
+  for(Person p: ps){
+    if(p.fIdx ==3 && p.position.x<0){
+      toRemove.add(p);
+    }
+  }
+  for(int i=toRemove.size()-1; i>=0;i--){
+    Person removing = toRemove.get(i);
+    ps.remove(removing);
+    toRemove.remove(i);
+    removing = null;
+  }
   
   for(Person p: ps){
     p.direction = p.velocity.copy().normalize();

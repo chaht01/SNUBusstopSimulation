@@ -26,7 +26,17 @@ class Person extends Attractor {
   Person(float x, float y, int _fIdx, ArrayList<Attractor> _stations, int _n) {
     super(x, y, _n);
     tick = 0;
-    maxspeed = random(0.5, 1.5);
+    float defaultStationInterval = 400;
+    float pxResolution = 13/defaultStationInterval;
+  /**
+    * Length from subway to left ahead of 5511 station is 67.375m
+    * Length of left ahead of 5515 station is 1.625m
+    * The screen's expression range is 52m
+    * Duration time of person who goes to 5511 station is 50sec
+    * Thus, v = (1.1/0.0325)px/sec = 101.53
+    * We'll use velocity x3 magnitude(v*3). 
+   **/
+    maxspeed = (101.53/60.0)+random(-0.5, 0.5);
     maxforce = 0.1;
     stations = _stations;
     fIdx = _fIdx;
@@ -164,9 +174,9 @@ class Person extends Attractor {
           minDistCandidates[i] = min;
         } else {
           if (found[fIdx]) {
-            text("-", position.x, position.y);
+            //text("-", position.x, position.y);
           } else {
-            text("+", position.x, position.y);
+            //text("+", position.x, position.y);
           }
         }
       }
@@ -534,6 +544,7 @@ class Person extends Attractor {
 
 
 
+    if(debug){
       int cnt = -1;
       if (forward!=null) {
         Attractor curr = stations.get(fIdx);
@@ -565,6 +576,7 @@ class Person extends Attractor {
         fill(0);
         text("!!", position.x, position.y-10);
       }
+    }
       
       if(seeStress){
         float a = r * (1 + 4*stress); // *******************adjust constant
