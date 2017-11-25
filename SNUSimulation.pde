@@ -19,24 +19,7 @@ int dispenseIntervalMinutes;
 int dispenseIntervalTickMulted;
 int dispenseTick;
 
-int interval5515Minutes;
-int interval5513Minutes;
-int interval5511Minutes;
-int interval5515MinutesTickMulted;
-int interval5513MinutesTickMulted;
-int interval5511MinutesTickMulted;
-int tick5515;
-int tick5513;
-int tick5511;
-
 boolean triggerOutlet;
-boolean trigger5515;
-boolean trigger5513;
-boolean trigger5511;
-
-int people5515Cnt;
-int people5513Cnt;
-int people5511Cnt;
 
 float systemSpeed = 6;
 
@@ -53,15 +36,6 @@ void setup() {
   dispenseIntervalMinutes = 6;
   dispenseIntervalTickMulted = minutesToTicks(dispenseIntervalMinutes);//frame
   
-  tick5515 = 0;
-  tick5513 = 0;
-  tick5511 = 0;
-  interval5515Minutes = 5;
-  interval5513Minutes = 7;
-  interval5511Minutes = 7;
-  interval5515MinutesTickMulted = minutesToTicks(interval5515Minutes);
-  interval5513MinutesTickMulted = minutesToTicks(interval5513Minutes);
-  interval5511MinutesTickMulted = minutesToTicks(interval5511Minutes);
   
   dispenseTick = 0;
   triggerOutlet = true;
@@ -78,7 +52,7 @@ void setup() {
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
   normal.setLineDistortion(new float[]{PI/180, PI/180, PI/180, 0});
   normal.setStrictness(new float[]{12, 12, 12, 0});
-  normal.setStartTick(new int[]{minutesToTicks(1), minutesToTicks(2), minutesToTicks(1), minutesToTicks(100)});
+  normal.setStartTick(new int[]{minutesToTicks(1), minutesToTicks(2), minutesToTicks(2), minutesToTicks(100)});
   normal.setMarginalTick(new int[]{minutesToTicks(7), minutesToTicks(7), minutesToTicks(5), minutesToTicks(1000)});
   
   Env shuffled151113 = normal.copy();
@@ -151,7 +125,7 @@ void draw() {
     triggerOutlet = true;
   }
   if(triggerOutlet == true){
-    peopleOutletCnt += (int)(random(17*dispenseIntervalMinutes, 50*dispenseIntervalMinutes));
+    peopleOutletCnt += (int)(random(30*dispenseIntervalMinutes, 50*dispenseIntervalMinutes));
     triggerOutlet = false;
   }
   // People spend about 84ticks to go through unseen distance(4.625m)
