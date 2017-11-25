@@ -21,7 +21,7 @@ class Env{
   void setStationDir(float[][] a){
     stationDir = new PVector[a.length];
     for(int i=0; i<a.length; i++){
-      stationDir[i] = new PVector(a[i][0], a[i][1]);
+      stationDir[i] = new PVector(a[i][0], a[i][1]).normalize();
     }
   }
   void setGuideLineDist(float a[]){

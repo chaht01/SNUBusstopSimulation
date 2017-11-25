@@ -12,7 +12,7 @@ Env selectedEnv;
 float stressPool;
 
 void setup() {
-  size(800, 500);
+  size(1600, 350);
   ps = new ArrayList<Person>();
   stations = new ArrayList<Attractor>();
   envs = new ArrayList<Env>();
@@ -20,7 +20,7 @@ void setup() {
   Env normal = new Env(4);
   //normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
   normal.setRatio(new float[]{0.4, 0.4, 0.2, 0});
-  normal.setStationDir(new float[][]{{-1,1}, {-1,1}, {-5,1}, {0,0}});
+  normal.setStationDir(new float[][]{{-3,1}, {-4,1}, {-5,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
   normal.setLineDistortion(new float[]{0, 0, 0, 0});
   normal.setStrictness(new float[]{4, 4, 4, 0});
@@ -46,7 +46,7 @@ void setup() {
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
-    Attractor s = new Attractor(50+i*50, height-30);
+    Attractor s = new Attractor(50+i*400, height-30);
     s.direction = selectedEnv.stationDir[i];
     s.lineDistortion = selectedEnv.lineDistortion[i];
     s.guideLineDist = selectedEnv.guideLineDist[i];
@@ -58,12 +58,12 @@ void setup() {
     stations.add(s);
   }
   
-  for(int i=0; i<30; i++){
+  for(int i=0; i<20; i++){
     float r = random(1);
     float rangeStart = 0;
     for(int j=0; j<selectedEnv.personRatio.length; j++){
       if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
-        ps.add(new Person(random(width*4/5, width), random(height/2, height), j, stations, i));
+        ps.add(new Person(random(width*5/6, width), random(height/3, height-50), j, stations, i));
       }
       rangeStart+=selectedEnv.personRatio[j];
     }
@@ -122,12 +122,12 @@ void mousePressed() {
       p.debug = !p.debug;
     }
   } 
-  for(int i=0; i<25; i++){
+  for(int i=0; i<20; i++){
     float r = random(1);
     float rangeStart = 0;
     for(int j=0; j<selectedEnv.personRatio.length; j++){
       if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
-        ps.add(new Person(random(width*4/5, width), random(height/2, height), j, stations, i));
+        ps.add(new Person(random(width*5/6, width), random(height/3, height-50), j, stations, i));
       }
       rangeStart+=selectedEnv.personRatio[j];
     }
@@ -189,6 +189,7 @@ void keyPressed() {
             delPerson.backward.forward = stations.get(0);
             stations.get(0).backward = delPerson.backward;
           }
+          else if(delPerson.backward == null) stations.get(0).backward = null;
         stressPool += delPerson.stress;
         ps.remove(delPerson);
         delPerson = null;
@@ -202,6 +203,7 @@ void keyPressed() {
             delPerson.backward.forward = stations.get(1);
             stations.get(1).backward = delPerson.backward;
           }
+          else if(delPerson.backward == null) stations.get(1).backward = null;
         stressPool += delPerson.stress;
         ps.remove(delPerson);
         delPerson = null;
@@ -214,6 +216,7 @@ void keyPressed() {
             delPerson.backward.forward = stations.get(2);
             stations.get(2).backward = delPerson.backward;
           }
+          else if(delPerson.backward == null) stations.get(2).backward = null;
         stressPool += delPerson.stress;
         ps.remove(delPerson);
         delPerson = null;
