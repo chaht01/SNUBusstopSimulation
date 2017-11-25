@@ -38,14 +38,14 @@ class Person extends Attractor {
     velocity = new PVector(0, 0);
     certified = false;
     found = new boolean[_stations.size()];
-    found[found.length-1] = false;
+    found[found.length-2] = true;
     lineDistortion = random(follow.lineDistortion, follow.lineDistortion*2);
     debug = false;
     seen = true;
     
     
-    stressEn = new boolean[] {true, true, true};
-    stressCnt = new int[]{0,0,0};
+    stressEn = new boolean[] {true, true, true, true};
+    stressCnt = new int[]{0,0,0,0};
     stress = 0;
     seeStress = false;
     log = 0;
@@ -94,6 +94,7 @@ class Person extends Attractor {
       applyForce(separateForce);
       applyForce(arriveForce);
     }
+    getStress(ps);
   }
 
   void validateForward() {
@@ -464,12 +465,6 @@ class Person extends Attractor {
           diff2.div(d);        // Weight by distance
           steer.add(diff2);
           count++;            // Keep track of how many
-          
-          if(stressEn[0]) {
-            stressCnt[0]++;
-            stressEn[0] = false;
-          }
-          
         }
       }
     }
@@ -567,7 +562,7 @@ class Person extends Attractor {
       }
       
       if(seeStress){
-        float a = r * (1 + 4*stress); // *******************adjust constant
+        float a = r * (1 + 2*stress); // *******************adjust constant
         float k = constrain(a, r, 3*r);
         fill(col);
         noStroke();
@@ -605,13 +600,39 @@ class Person extends Attractor {
   }
   
   void setStress(){
-    stress = stressCnt[0]*0.1 + stressCnt[1]*0.1 + stressCnt[2]*1000; // **************adjust constant
+    stress = stressCnt[0]*0.1 + stressCnt[1]*0.1 + stressCnt[2]*50 + stressCnt[3]*10;// **************adjust constant
   }
   
   void setStressEn(){
     if(tick == 0) { // ******************* adjust tick
       stressEn[0] = true;
       stressEn[1] = true;
+    }
+  }
+  
+  void getStress(ArrayList<Person> ps) {
+    for (Person p : ps) { ////////////////////////stress0
+      if (p!=this && !p.isArriving) {
+        float d = PVector.dist(position, p.position);
+        float desiredseparation = getIntervalSize()*2;
+        if (d > 0 && d < desiredseparation && !p.certified) {
+          if(stressEn[0]) {
+            stressCnt[0]++;
+            stressEn[0] = false;
+          }
+        }
+      }
+    }
+    
+    if(certified && stressEn[3]) { ///////////////////stress3
+      for (Person p : ps) {
+        float d = PVector.dist(position, p.position);
+        float desiredseparation = getIntervalSize()*2;
+        if(p != this && d > 0 && d < desiredseparation && p.everCertified == true) {
+          stressCnt[3]++;
+        }
+      }
+    stressEn[3] = false;
     }
   }
   

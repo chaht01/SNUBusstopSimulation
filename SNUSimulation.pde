@@ -18,35 +18,50 @@ void setup() {
   envs = new ArrayList<Env>();
   
   Env normal = new Env(4);
-  //normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
-  normal.setRatio(new float[]{0.4, 0.4, 0.2, 0});
-  normal.setStationDir(new float[][]{{-3,1}, {-4,1}, {-5,1}, {0,0}});
+  normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
+  //normal.setRatio(new float[]{0.4, 0.4, 0.2, 0});
+  normal.setInterval(new float[]{50,450,850,-10});
+  normal.setStationDir(new float[][]{{-4,1}, {-4,1}, {-10,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
   normal.setLineDistortion(new float[]{0, 0, 0, 0});
   normal.setStrictness(new float[]{4, 4, 4, 0});
   
-  Env shuffled131115 = normal.copy();
-  shuffled131115.shuffle(new int[]{1, 0, 2, 3});
-  shuffled131115.setStationDir(new float[][]{{0,1}, {-0.5,1}, {-1,1}, {0,0}});
-  shuffled131115.setGuideLineDist(new float[]{15, 10, 5, 0});
+  Env shuffled151113 = normal.copy();
+  shuffled151113.shuffle(new int[]{2, 0, 1, 3});
+  shuffled151113.setStationDir(new float[][]{{-4,1}, {-4,1}, {-10,1}, {0,0}});
+  shuffled151113.setGuideLineDist(new float[]{15, 10, 5, 0});
+  
+  Env shuffled111513 = normal.copy();
+  shuffled111513.shuffle(new int[]{0, 2, 1, 3});
+  shuffled111513.setStationDir(new float[][]{{-4,1}, {-4,1}, {-10,1}, {0,0}});
+  shuffled111513.setGuideLineDist(new float[]{15, 10, 5, 0});
   
   Env remove5515 = normal.copy();
-  remove5515.setRatio(new float[]{0.1, 0.1, 0, 0.8});
-  remove5515.setStationDir(new float[][]{{-0.5,1}, {-1,1}, {0,0.0001}, {0,0}});
-  remove5515.setGuideLineDist(new float[]{15, 10, 0, 0});
+  remove5515.setRatio(new float[]{0.1, 0, 0.1, 0.8});
+  remove5515.setInterval(new float[]{50,50,650,-10});
+  remove5515.setStationDir(new float[][]{{-4,1}, {-4,1}, {-5,1}, {0,0}});
+  remove5515.setGuideLineDist(new float[]{15, 0, 10, 0});
   remove5515.setLineDistortion(new float[]{0, 0, 0, 0});
-  remove5515.setStrictness(new float[]{10, 5, 0, 0});
+  remove5515.setStrictness(new float[]{10, 0, 5, 0});
   
+  Env moved1 = normal.copy();
+  moved1.setInterval(new float[]{50,250,850,-10});
+  
+  Env moved2 = normal.copy();
+  moved2.setInterval(new float[]{50,650,850,-10});
   
   envs.add(normal);
-  envs.add(shuffled131115);
+  envs.add(shuffled151113);
+  envs.add(shuffled111513);
   envs.add(remove5515);
+  envs.add(moved1);
+  envs.add(moved2);
   
-  int selectedEnvIdx = 0;
+  int selectedEnvIdx = 4;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
-    Attractor s = new Attractor(50+i*400, height-30);
+    Attractor s = new Attractor(selectedEnv.interval[i], height-30);
     s.direction = selectedEnv.stationDir[i];
     s.lineDistortion = selectedEnv.lineDistortion[i];
     s.guideLineDist = selectedEnv.guideLineDist[i];
@@ -58,12 +73,12 @@ void setup() {
     stations.add(s);
   }
   
-  for(int i=0; i<20; i++){
+  for(int i=0; i<10; i++){
     float r = random(1);
     float rangeStart = 0;
     for(int j=0; j<selectedEnv.personRatio.length; j++){
       if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
-        ps.add(new Person(random(width*5/6, width), random(height/3, height-50), j, stations, i));
+        ps.add(new Person(random(width-150, width), random(height/3, height-50), j, stations, i));
       }
       rangeStart+=selectedEnv.personRatio[j];
     }
@@ -92,7 +107,7 @@ void draw() {
   fill(50);
   textSize(20);
   text("Stress : ", width - 200, height - 20);
-  text(stress + stressPool, width - 100, height - 20);
+  text(stress + stressPool, width - 130, height - 20);
   textSize(10);
   
   // Call the appropriate steering behaviors for our agents
@@ -122,12 +137,12 @@ void mousePressed() {
       p.debug = !p.debug;
     }
   } 
-  for(int i=0; i<20; i++){
+  for(int i=0; i<10; i++){
     float r = random(1);
     float rangeStart = 0;
     for(int j=0; j<selectedEnv.personRatio.length; j++){
       if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
-        ps.add(new Person(random(width*5/6, width), random(height/3, height-50), j, stations, i));
+        ps.add(new Person(random(width-150, width), random(height/3, height-50), j, stations, i));
       }
       rangeStart+=selectedEnv.personRatio[j];
     }

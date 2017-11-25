@@ -1,6 +1,7 @@
 class Env{
   int stationCnt;
   float personRatio[];
+  float interval[];
   PVector stationDir[];
   float guideLineDist[];
   float lineDistortion[];
@@ -17,6 +18,9 @@ class Env{
   }
   void setRatio(float a[]){
     personRatio = a;
+  }
+  void setInterval(float a[]){
+    interval = a;
   }
   void setStationDir(float[][] a){
     stationDir = new PVector[a.length];
@@ -35,6 +39,7 @@ class Env{
   }
   Env copy(){
     Env ret = new Env(stationCnt);
+    ret.interval = interval.clone();
     ret.personRatio = personRatio.clone();
     ret.stationDir = stationDir.clone();
     ret.guideLineDist = guideLineDist.clone();
