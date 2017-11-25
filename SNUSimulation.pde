@@ -15,10 +15,11 @@ int tick;
 int seconds;
 int peopleOutletCnt;
 int dispenseInterval;
+int dispenseTick;
 boolean triggerOutlet;
 
 int getDispenseInterval(float dispenseInterval){
-  return (int)((dispenseInterval/3)*60*60);
+  return (int)((dispenseInterval/3.0)*60*60);
 }
 void setup() {
   frameRate(60);
@@ -26,7 +27,8 @@ void setup() {
   tick = 0;
   seconds = 0;
   peopleOutletCnt = 0;
-  dispenseInterval = getDispenseInterval(3);//frame
+  dispenseInterval = getDispenseInterval(6.0);//frame
+  dispenseTick = 0;
   triggerOutlet = true;
   size(1600, 350);
   
@@ -98,11 +100,13 @@ void draw() {
     tick%=60;
     seconds++;
   }
-  if(totalTick%dispenseInterval==0){
+  if(dispenseTick >dispenseInterval){
+    dispenseTick = 0;
     triggerOutlet = true;
   }
   if(triggerOutlet == true){
-    peopleOutletCnt += (int)(randomGaussian()*16+17)*7;
+    //peopleOutletCnt += (int)(randomGaussian()*16+17)*6;
+    peopleOutletCnt += (int)(random(17*6, 50*6));
     triggerOutlet = false;
   }
   // People spend about 84ticks to go through unseen distance(4.625m)
@@ -122,6 +126,7 @@ void draw() {
     }
   }
   tick++;
+  dispenseTick++;
   totalTick++;
   
   
@@ -185,22 +190,22 @@ void draw() {
 }
 
 void mousePressed() {
-  for(Person p: ps){
-    if(abs(p.position.x - mouseX)<10 && abs(p.position.y-mouseY)<10){
-      p.debug = !p.debug;
-    }
-  } 
-  for(int i=0; i<10; i++){
-    float r = random(1);
-    float rangeStart = 0;
-    for(int j=0; j<selectedEnv.personRatio.length; j++){
-      if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
-        ps.add(new Person(random(width-150, width), random(height/3, height-50), j, stations, i));
-      }
-      rangeStart+=selectedEnv.personRatio[j];
-    }
-    rangeStart = 0;
-  }
+  //for(Person p: ps){
+  //  if(abs(p.position.x - mouseX)<10 && abs(p.position.y-mouseY)<10){
+  //    p.debug = !p.debug;
+  //  }
+  //} 
+  //for(int i=0; i<10; i++){
+  //  float r = random(1);
+  //  float rangeStart = 0;
+  //  for(int j=0; j<selectedEnv.personRatio.length; j++){
+  //    if(rangeStart<=r && r<rangeStart+selectedEnv.personRatio[j]){
+  //      ps.add(new Person(random(width-150, width), random(height/3, height-50), j, stations, i));
+  //    }
+  //    rangeStart+=selectedEnv.personRatio[j];
+  //  }
+  //  rangeStart = 0;
+  //}
 }
 
 void keyPressed() {
