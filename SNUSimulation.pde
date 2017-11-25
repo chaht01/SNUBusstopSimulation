@@ -20,6 +20,7 @@ int dispenseTick;
 boolean triggerOutlet;
 float systemSpeed = 6;
 
+
 int getDispenseInterval(float dispenseInterval){
   return (int)((dispenseInterval/systemSpeed)*60*60);
 }
@@ -42,7 +43,7 @@ void setup() {
   Env normal = new Env(4);
   normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
   normal.setInterval(new float[]{50,450,850,-10});
-  normal.setStationDir(new float[][]{{-1,1}, {-1,1}, {-1,1}, {0,0}});
+  normal.setStationDir(new float[][]{{-4,1}, {-5,1}, {-10,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
   normal.setLineDistortion(new float[]{PI/180, PI/180, PI/180, 0});
   normal.setStrictness(new float[]{12, 12, 12, 0});
