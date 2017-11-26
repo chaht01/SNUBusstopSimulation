@@ -243,7 +243,13 @@ class Person extends Attractor {
             }
           }else{
             //do nothing.. only guessing.. 
-            //affect to estimate function 
+            //affect to estimate function
+            
+            for(Person p: ps){
+              if(p.certified){
+                
+              }
+            }
           }
         }
       }

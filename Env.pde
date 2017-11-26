@@ -66,6 +66,10 @@ class Env{
     ret.lineDistortion = lineDistortion.clone();
     ret.colors = colors.clone();
     ret.strictness = strictness.clone();
+    ret.ticks = ticks.clone();
+    ret.triggerRide = triggerRide.clone();
+    ret.accomodate = accomodate.clone();
+    ret.marginalTick = marginalTick.clone();
     return ret;
   }
   
@@ -81,6 +85,10 @@ class Env{
        lineDistortion[i] = copied.lineDistortion[order[i]];
        colors[i] = copied.colors[order[i]];
        strictness[i] = copied.strictness[order[i]];
+       ticks[i] = copied.ticks[order[i]];
+      triggerRide[i] = copied.triggerRide[order[i]];
+      accomodate[i] = copied.accomodate[order[i]];
+      marginalTick[i] = copied.marginalTick[order[i]];
     }
   }
 }
