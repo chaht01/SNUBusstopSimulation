@@ -81,8 +81,9 @@ void setup() {
   
   Env guideLined = normal.copy();
   guideLined.setStationDir(new float[][]{{0,1}, {-0,5,1}, {-0.75,1}, {0,0}});
-  guideLined.setGuideLineDist(new float[]{50, 25, 5, 0});
-  guideLined.setLineDistortion(new float[]{4*PI/180, 5*PI/180, 6*PI/180, PI/180});
+  guideLined.setGuideLineDist(new float[]{5, 5, 5, 0});
+  guideLined.setLineDistortion(new float[]{2*PI/180, 4*PI/180, 4*PI/180, PI/180});
+  guideLined.setStrictness(new float[]{4, 6, 6, 0});
   
   envs.add(normal);
   envs.add(shuffled151113);
@@ -92,7 +93,7 @@ void setup() {
   envs.add(moved2);
   envs.add(guideLined);
   
-  int selectedEnvIdx = 0;
+  int selectedEnvIdx = 6;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
