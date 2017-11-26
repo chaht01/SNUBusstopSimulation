@@ -93,8 +93,14 @@ void setup() {
   envs.add(moved1);
   envs.add(moved2);
   envs.add(guideLined);
-  
-  int selectedEnvIdx = 2;
+  /**
+   *  EEEEE   EE    EE   EE   EE
+   *  EE      EEE   EE   EE   EE
+   *  EEEEE   EE EE EE    EE EE 
+   *  EE      EE  EEEE     EEE
+   *  EEEEE   EE   EEE      E
+   **/
+  int selectedEnvIdx = 0;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
@@ -113,7 +119,7 @@ void setup() {
 }
 
 void draw() {
-  background(255);
+  background(0);
   if(tick/60>=1){
     tick%=60;
     seconds++;
@@ -201,7 +207,7 @@ void draw() {
   for(Person p: ps){
     if(p.fIdx != 3) stress += p.stress;
   }
-  fill(50);
+  fill(255);
   textSize(20);
   text("Stress : ", width - 200, height - 20);
   text(stress + stressPool, width - 130, height - 20);
