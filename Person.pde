@@ -175,10 +175,6 @@ class Person extends Attractor {
       } else {
         Attractor station = stations.get(i);
         PVector towardStation = PVector.sub(station.position, position);
-        if (towardStation.mag() <200) {
-          found[i] = true;
-          continue;
-        }
         ArrayList<Attractor> candidates = new ArrayList<Attractor>();
         for (Person other : ps) {
           if (other!=this) {
@@ -201,10 +197,13 @@ class Person extends Attractor {
           found[i] = true;
           guessing = false;
           
-          if(found[1]){
-            found[0] = true;
+          if(fIdx+1 < stations.size() && found[fIdx+1]){
+            found[fIdx] = true;
             guessing = false;
           }
+        }
+        if (towardStation.mag() <200) {
+          found[i] = true;
         }
 
         for (int j=candidates.size()-1; j>=0; j--) {
@@ -271,8 +270,8 @@ class Person extends Attractor {
             if (!isAnotherLine) {
               found[fIdx] = true;
               guessing = false;
-              if(found[1]){
-                found[0] = true;
+              if(fIdx+1 < stations.size() && found[fIdx+1]){
+                found[fIdx] = true;
                 guessing = false;
               }
               //col = color(255, 0, 255); //purple

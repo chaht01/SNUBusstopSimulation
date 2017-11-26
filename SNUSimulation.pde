@@ -57,12 +57,12 @@ void setup() {
   
   Env shuffled151113 = normal.copy();
   shuffled151113.shuffle(new int[]{2, 0, 1, 3});
-  shuffled151113.setStationDir(new float[][]{{-2,1}, {-2,1}, {-5,1}, {0,0}});
+  shuffled151113.setStationDir(new float[][]{{-1.5,1}, {-2,1}, {-5,1}, {0,0}});
   shuffled151113.setGuideLineDist(new float[]{15, 10, 5, 0});
   
   Env shuffled111513 = normal.copy();
   shuffled111513.shuffle(new int[]{0, 2, 1, 3});
-  shuffled111513.setStationDir(new float[][]{{-2,1}, {-2,1}, {-5,1}, {0,0}});
+  shuffled111513.setStationDir(new float[][]{{-1.5,1}, {-2,1}, {-5,1}, {0,0}});
   shuffled111513.setGuideLineDist(new float[]{15, 10, 5, 0});
   
   Env remove5515 = normal.copy();
@@ -94,7 +94,7 @@ void setup() {
   envs.add(moved2);
   envs.add(guideLined);
   
-  int selectedEnvIdx = 0;
+  int selectedEnvIdx = 1;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
@@ -127,7 +127,7 @@ void draw() {
     triggerOutlet = true;
   }
   if(triggerOutlet == true){
-    peopleOutletCnt += (int)(random(30*dispenseIntervalMinutes, 50*dispenseIntervalMinutes));
+    peopleOutletCnt += (int)(random(30*dispenseIntervalMinutes, 45*dispenseIntervalMinutes));
     triggerOutlet = false;
   }
   // People spend about 84ticks to go through unseen distance(4.625m)
