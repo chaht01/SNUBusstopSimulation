@@ -100,7 +100,7 @@ void setup() {
    *  EE      EE  EEEE     EEE
    *  EEEEE   EE   EEE      E
    **/
-  int selectedEnvIdx = 0;
+  int selectedEnvIdx = 2;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
@@ -133,7 +133,7 @@ void draw() {
     triggerOutlet = true;
   }
   if(triggerOutlet == true){
-    peopleOutletCnt += (int)(random(10*dispenseIntervalMinutes, 20*dispenseIntervalMinutes));
+    peopleOutletCnt += (int)(random(15*dispenseIntervalMinutes, 20*dispenseIntervalMinutes));
     triggerOutlet = false;
   }
   // People spend about 84ticks to go through unseen distance(4.625m)
