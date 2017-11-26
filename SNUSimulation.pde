@@ -48,9 +48,9 @@ void setup() {
   Env normal = new Env(4);
   normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
   normal.setInterval(new float[]{50,450,850,-10});
-  normal.setStationDir(new float[][]{{-1,1}, {-1,1}, {-1,1}, {0,0}});
+  normal.setStationDir(new float[][]{{-4,1}, {-4,1}, {-4,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
-  normal.setLineDistortion(new float[]{PI/180, PI/180, PI/180, 0});
+  normal.setLineDistortion(new float[]{0,0,0, 0});
   normal.setStrictness(new float[]{12, 12, 12, 0});
   normal.setStartTick(new int[]{minutesToTicks(1), minutesToTicks(2), minutesToTicks(2), minutesToTicks(100)});
   normal.setMarginalTick(new int[]{minutesToTicks(7), minutesToTicks(7), minutesToTicks(5), minutesToTicks(1000)});
@@ -93,7 +93,7 @@ void setup() {
   envs.add(moved2);
   envs.add(guideLined);
   
-  int selectedEnvIdx = 6;
+  int selectedEnvIdx = 0;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
@@ -227,7 +227,7 @@ void draw() {
     if(p.fIdx != 3) p.estimate(ps);                       // get estimate path position ahead
   }
   for(Person p: ps){
-    if(p.fIdx != 3 && !p.everCertified) p.validateForward();                  // validate forward Person is on the way of estimate path
+    if(p.fIdx != 3) p.validateForward();                  // validate forward Person is on the way of estimate path
   }
   for(Person p: ps){
     if(p.fIdx != 3 && !p.everCertified) p.findLastOfLineAndFollow(ps);          // find person(or station) who is in the last of line(certified or arrived). If found, set forward as him.
@@ -243,7 +243,7 @@ void riding(int stationIdx){
   if(stations.get(stationIdx).backward != null){
       Attractor delPerson = stations.get(stationIdx).backward;
       Attractor pointer = delPerson;
-        while(pointer.backward!=null && pointer.backward.everCertified){
+        while(pointer.backward!=null){
         pointer.backward.everForward = pointer.copy();
         pointer = pointer.backward;
       }
