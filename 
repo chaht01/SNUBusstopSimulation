@@ -1,0 +1,22 @@
+[33m6868bd6[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m HEAD@{0}: commit: constant changed
+[33mbe2e668[m HEAD@{1}: pull: Merge made by the 'recursive' strategy.
+[33m2a4b57c[m HEAD@{2}: commit: constant changed
+[33m2415a04[m HEAD@{3}: pull: Fast-forward
+[33m8f6acfb[m HEAD@{4}: commit: stress modified
+[33m883cac6[m HEAD@{5}: reset: moving to HEAD~2
+[33m030270f[m HEAD@{6}: commit: stress modified
+[33md574490[m HEAD@{7}: commit: stress modified
+[33m883cac6[m HEAD@{8}: pull: Fast-forward
+[33m8fc2227[m HEAD@{9}: pull: Fast-forward
+[33m24f3f6c[m HEAD@{10}: pull: Fast-forward
+[33m96eef98[m HEAD@{11}: commit: 1. New stress - When people arrive at the line if their line and another are overlapped, they get stress3. Moreover getStress func is added and stress constants are changed.
+[33mc688eb5[m HEAD@{12}: commit: 1. Setup reflecting the real size
+[33ma960803[m HEAD@{13}: reset: moving to HEAD^
+[33m573b284[m HEAD@{14}: reset: moving to HEAD^
+[33mb659a5e[m HEAD@{15}: pull: Merge made by the 'recursive' strategy.
+[33m573b284[m HEAD@{16}: commit: 1. Setup reflecting the real size
+[33ma960803[m HEAD@{17}: reset: moving to HEAD~1
+[33mc324558[m HEAD@{18}: commit: 1. Setup reflecting the real size
+[33ma960803[m HEAD@{19}: pull: Fast-forward
+[33m965c4fb[m HEAD@{20}: commit: 1. changed pedestrian color
+[33m0231ec1[m HEAD@{21}: clone: from https://github.com/chaht01/SNUBusstopSimulation.git

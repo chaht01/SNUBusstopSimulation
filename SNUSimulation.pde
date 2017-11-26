@@ -228,7 +228,7 @@ void draw() {
     if(p.fIdx != 3) p.estimate(ps);                       // get estimate path position ahead
   }
   for(Person p: ps){
-    if(p.fIdx != 3 && !p.everCertified) p.validateForward();                  // validate forward Person is on the way of estimate path
+    if(p.fIdx != 3) p.validateForward();                  // validate forward Person is on the way of estimate path
   }
   for(Person p: ps){
     if(p.fIdx != 3 && !p.everCertified) p.findLastOfLineAndFollow(ps);          // find person(or station) who is in the last of line(certified or arrived). If found, set forward as him.
@@ -244,7 +244,7 @@ void riding(int stationIdx){
   if(stations.get(stationIdx).backward != null){
       Attractor delPerson = stations.get(stationIdx).backward;
       Attractor pointer = delPerson;
-        while(pointer.backward!=null && pointer.backward.everCertified){
+        while(pointer.backward!=null){
         pointer.backward.everForward = pointer.copy();
         pointer = pointer.backward;
       }

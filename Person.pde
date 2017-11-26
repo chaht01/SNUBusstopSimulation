@@ -1,3 +1,4 @@
+
 class Person extends Attractor {
   PVector acceleration;
   float r;
@@ -112,23 +113,54 @@ class Person extends Attractor {
 
   void validateForward() {
     //if (forward!=null && !found[fIdx]) {
-    if (forward!=null) {  
+    if (forward!=null) {
+      boolean invalid = false;
       PVector estimatePath = PVector.sub(estimateTarget.position, position).normalize();
       PVector forwardDirection = PVector.sub(forward.position, position).normalize();
 
       float angle = PVector.angleBetween(estimatePath, forwardDirection);
-      if (angle>30*PI/180) { // if invalid, release forward person.
-        if (forward!=null) {
-          forward.backward = null;
+      if(everCertified){
+        int aheadCnt = 0;
+        Attractor pointer = this;
+        while(pointer.forward!=null){
+          aheadCnt++;
+          pointer = pointer.forward;
         }
-
-        if (backward!=null) {
-          backward.forward = null;
+        if(aheadCnt<20 && !pointer.equals(stations.get(fIdx))){
+          invalid = true;
         }
-
-        forward = null;
-        backward = null;
+        if(stations.get(fIdx).position.x > position.x && !pointer.equals(stations.get(fIdx))){
+          invalid = true;
+        }
+        
+      }else{
+        if (angle>15*PI/180) {
+          invalid = true;
+        }
       }
+      if(invalid){
+          if (forward!=null) {
+            if(everCertified){
+              forward.backward = backward;
+            }else{
+              forward.backward = null;
+            }
+          }
+          if (backward!=null) {
+            if(everCertified){
+              backward.forward  = forward;
+            }else{
+              backward.forward  = null;
+            }
+          }
+  
+          forward = null;
+          backward = null;
+          everCertified = false;
+          certified = false;
+          isArriving = false;
+          velocity.setMag(maxspeed);
+        }
     }
   }
 
@@ -144,6 +176,10 @@ class Person extends Attractor {
       } else {
         Attractor station = stations.get(i);
         PVector towardStation = PVector.sub(station.position, position);
+        if(towardStation.mag() <200){
+          found[i] = true;
+          continue;
+        }
         ArrayList<Attractor> candidates = new ArrayList<Attractor>();
         for (Person other : ps) {
           if (other!=this) {
@@ -180,12 +216,6 @@ class Person extends Attractor {
             }
           }      
           minDistCandidates[i] = min;
-        } else {
-          if (found[fIdx]) {
-            text("-", position.x, position.y);
-          } else {
-            text("+", position.x, position.y);
-          }
         }
       }
     }
@@ -244,12 +274,32 @@ class Person extends Attractor {
           }else{
             //do nothing.. only guessing.. 
             //affect to estimate function
-            
+            ArrayList<Attractor> guessCandidates = new ArrayList<Attractor>();
             for(Person p: ps){
+              PVector comparer = new PVector(-1, 0);
               if(p.certified){
-                
+                Attractor toPush = lastAttractorOfLine(p);
+                if(!guessCandidates.contains(toPush)){
+                  guessCandidates.add(toPush);
+                }
               }
             }
+            for(int i = 1 ; i < guessCandidates.size() ; i++){
+          
+                Attractor tmpC = guessCandidates.get(i);
+                int aux = i - 1;
+          
+                while( (aux >= 0) && ( guessCandidates.get(aux).position.y > tmpC.position.y) ) {
+          
+                   guessCandidates.set(aux+1, guessCandidates.get(aux));
+                   aux--;
+                }
+                guessCandidates.set(aux + 1, tmpC);
+             }
+             if(guessCandidates.size()>fIdx && PVector.dist(guessCandidates.get(fIdx).position, estimateTarget.position)<400){
+               guessing = false;
+               setForward(guessCandidates.get(fIdx));
+             }
           }
         }
       }
@@ -434,7 +484,7 @@ class Person extends Attractor {
     tempTarget = (!found[fIdx] && guessing) ? stations.get(fIdx).copy() : lastAttractorOfLine(stations.get(fIdx)).copy();
     if(!found[fIdx] && guessing){
       tempTarget.position.x +=100;
-      //tempTarget.position.y +=50;
+      tempTarget.position.y +=15;
     }else{
       for (int i=0; i<cnt; i++) {
         tempTarget.position = PVector.sub(tempTarget.position, tempTarget.direction.copy().normalize().setMag(intervalSize));
