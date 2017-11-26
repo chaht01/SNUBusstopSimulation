@@ -154,7 +154,7 @@ class Person extends Attractor {
         everCertified = false;
         certified = false;
         isArriving = false;
-        velocity.setMag(maxspeed);
+        maxspeed = (33.84*systemSpeed/60.0)+random(-0.5, 0.5);
         if (stressEn[2]) {
           stressCnt[2]++;
           stressEn[2] = false;
@@ -707,7 +707,7 @@ class Person extends Attractor {
 
       if (seeStress) {
 
-        float a = r * (1 + stress); // *******************adjust constant
+        float a = r * (1 + 0.08*stress); // *******************adjust constant
 
         float k = constrain(a, r, 3*r);
         fill(col);
@@ -746,7 +746,7 @@ class Person extends Attractor {
 
   void setStress() {
 
-    stress = stressCnt[0]*0.5 + stressCnt[1]*5 + stressCnt[2]*5 + stressCnt[3]*5;// **************adjust constant
+    stress = stressCnt[0]*1 + stressCnt[1]*8.3 + stressCnt[2]*8.9 + stressCnt[3]*6.8;// **************adjust constant
   }
 
   void setStressEn() {
