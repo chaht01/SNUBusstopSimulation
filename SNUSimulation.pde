@@ -46,7 +46,7 @@ void setup() {
   envs = new ArrayList<Env>();
   
   Env normal = new Env(4);
-  normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
+  normal.setRatio(new float[]{0.04, 0.02, 0.21, 0.72});
   normal.setInterval(new float[]{50,450,850,-10});
   normal.setStationDir(new float[][]{{-1.5,1}, {-2,1}, {-5,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
@@ -58,21 +58,21 @@ void setup() {
   Env shuffled151113 = normal.copy();
   shuffled151113.shuffle(new int[]{2, 0, 1, 3});
   shuffled151113.setStationDir(new float[][]{{-1.5,1}, {-2,1}, {-5,1}, {0,0}});
-  shuffled151113.setGuideLineDist(new float[]{15, 10, 5, 0});
+  //shuffled151113.setGuideLineDist(new float[]{15, 10, 5, 0});
   
   Env shuffled111513 = normal.copy();
   shuffled111513.shuffle(new int[]{0, 2, 1, 3});
   shuffled111513.setStationDir(new float[][]{{-1.5,1}, {-2,1}, {-5,1}, {0,0}});
-  shuffled111513.setGuideLineDist(new float[]{15, 10, 5, 0});
+  //shuffled111513.setGuideLineDist(new float[]{15, 10, 5, 0});
   
   Env remove5515 = normal.copy();
-  remove5515.setRatio(new float[]{0.1, 0, 0.1, 0.8});
-  remove5515.setInterval(new float[]{50,50,650,-10});
-  remove5515.setStationDir(new float[][]{{-5,1}, {-4,1}, {-5,1}, {0,0}});
-  remove5515.setGuideLineDist(new float[]{15, 0, 10, 0});
-  remove5515.setLineDistortion(new float[]{0, 0, 0, 0});
-  remove5515.setStrictness(new float[]{10, 0, 5, 0});
-  remove5515.setMarginalTick(new int[]{minutesToTicks(7), minutesToTicks(5), minutesToTicks(7), minutesToTicks(1000)});
+  remove5515.setRatio(new float[]{0.1, 0.1, 0, 0.8});
+  remove5515.setInterval(new float[]{50,650,50,-10});
+  remove5515.setStationDir(new float[][]{{-5,1}, {-5,1}, {-5,1}, {0,0}});
+  //remove5515.setGuideLineDist(new float[]{15, 0, 10, 0});
+  //remove5515.setLineDistortion(new float[]{0, 0, 0, 0});
+  //remove5515.setStrictness(new float[]{10, 0, 5, 0});
+  //remove5515.setMarginalTick(new int[]{minutesToTicks(7), minutesToTicks(7), minutesToTicks(5), minutesToTicks(1000)});
   
   Env moved1 = normal.copy();
   moved1.setInterval(new float[]{50,250,850,-10});
@@ -94,7 +94,7 @@ void setup() {
   envs.add(moved2);
   envs.add(guideLined);
   
-  int selectedEnvIdx = 1;
+  int selectedEnvIdx = 2;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
@@ -127,7 +127,7 @@ void draw() {
     triggerOutlet = true;
   }
   if(triggerOutlet == true){
-    peopleOutletCnt += (int)(random(30*dispenseIntervalMinutes, 45*dispenseIntervalMinutes));
+    peopleOutletCnt += (int)(random(10*dispenseIntervalMinutes, 20*dispenseIntervalMinutes));
     triggerOutlet = false;
   }
   // People spend about 84ticks to go through unseen distance(4.625m)
