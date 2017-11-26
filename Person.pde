@@ -678,7 +678,7 @@ class Person extends Attractor {
   }
   
   void setStress(){
-    stress = stressCnt[0]*0.1 + stressCnt[1]*0.1 + stressCnt[2]*50 + stressCnt[3]*5;// **************adjust constant
+    stress = stressCnt[0]*0.1 + stressCnt[1]*1 + stressCnt[2]*50 + stressCnt[3]*5;// **************adjust constant
   }
   
   void setStressEn(){

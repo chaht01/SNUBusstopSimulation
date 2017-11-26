@@ -92,7 +92,7 @@ void setup() {
   envs.add(moved2);
   envs.add(guideLined);
   
-  int selectedEnvIdx = 0;
+  int selectedEnvIdx = 6;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
