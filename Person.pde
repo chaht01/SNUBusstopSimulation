@@ -155,6 +155,10 @@ class Person extends Attractor {
         certified = false;
         isArriving = false;
         velocity.setMag(maxspeed);
+        if (stressEn[2]) {
+          stressCnt[2]++;
+          stressEn[2] = false;
+        }
       }
     }
   }
@@ -296,6 +300,7 @@ class Person extends Attractor {
               }
               guessCandidates.set(aux + 1, tmpC);
             }
+
             for (int i=guessCandidates.size()-1; i>=0; i--) {
               Attractor gc = guessCandidates.get(i);
               PVector towardGc = PVector.sub(gc.position, position);
@@ -465,20 +470,6 @@ class Person extends Attractor {
       velocity = velocity.normalize();
       maxspeed = 1.0;
     }
-
-    Attractor temp = forward;
-    boolean correct = false;
-    while (temp.forward!=null) {
-      temp = temp.forward;
-    }
-    if (temp == stations.get(fIdx)) correct = true;
-    if (correct == false) {
-      if (stressEn[2]) { 
-        stressCnt[2]++;
-        stressEn[2] = false;
-      }
-    }
-
     return certifyOk;
   }
 
@@ -547,7 +538,9 @@ class Person extends Attractor {
       _target = forward!=null ? forward: estimateTarget;
       targetDir = _target.direction.copy().rotate(lineDistortion);
       if (targetDir.heading()<0) {
-        targetDir = new PVector(-1, 0);
+
+        targetDir = new PVector(-10, 1).normalize();
+
       }
       if (!guessing) {
         target = PVector.sub(_target.position, targetDir.setMag(2*intervalSize));
@@ -713,7 +706,9 @@ class Person extends Attractor {
       }
 
       if (seeStress) {
-        float a = r * (1 + 2*stress); // *******************adjust constant
+
+        float a = r * (1 + stress); // *******************adjust constant
+
         float k = constrain(a, r, 3*r);
         fill(col);
         noStroke();
@@ -750,7 +745,8 @@ class Person extends Attractor {
   }
 
   void setStress() {
-    stress = stressCnt[0]*0.1 + stressCnt[1]*0.1 + stressCnt[2]*50 + stressCnt[3]*5;// **************adjust constant
+
+    stress = stressCnt[0]*0.5 + stressCnt[1]*5 + stressCnt[2]*5 + stressCnt[3]*5;// **************adjust constant
   }
 
   void setStressEn() {
