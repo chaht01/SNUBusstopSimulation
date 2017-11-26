@@ -50,7 +50,7 @@ void setup() {
   normal.setInterval(new float[]{50,450,850,-10});
   normal.setStationDir(new float[][]{{-2,1}, {-2,1}, {-5,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
-  normal.setLineDistortion(new float[]{PI/180/2, PI/180/2, PI/180/2, 0});
+  normal.setLineDistortion(new float[]{PI/180/4, PI/180/2, PI/180, 0});
   normal.setStrictness(new float[]{12, 12, 12, 0});
   normal.setStartTick(new int[]{minutesToTicks(1), minutesToTicks(2), minutesToTicks(2), minutesToTicks(100)});
   normal.setMarginalTick(new int[]{minutesToTicks(7), minutesToTicks(7), minutesToTicks(5), minutesToTicks(1000)});

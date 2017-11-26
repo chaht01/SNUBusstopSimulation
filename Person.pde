@@ -160,6 +160,11 @@ class Person extends Attractor {
           certified = false;
           isArriving = false;
           velocity.setMag(maxspeed);
+          
+          if(stressEn[2]){
+            stressCnt[2]++;
+            stressEn[2] = false;
+          }
         }
     }
   }
@@ -449,19 +454,6 @@ class Person extends Attractor {
       maxspeed = 1.0;
     }
     
-    Attractor temp = forward;
-      boolean correct = false;
-      while(temp.forward!=null){
-        temp = temp.forward;
-      }
-      if(temp == stations.get(fIdx)) correct = true;
-      if(correct == false) {
-        if(stressEn[2]){ 
-          stressCnt[2]++;
-          stressEn[2] = false;
-        }
-    }
-    
     return certifyOk;
   }
 
@@ -734,7 +726,7 @@ class Person extends Attractor {
   }
   
   void setStress(){
-    stress = stressCnt[0]*0.1 + stressCnt[1]*1 + stressCnt[2]*50 + stressCnt[3]*5;// **************adjust constant
+    stress = stressCnt[0]*0.1 + stressCnt[1]*1 + stressCnt[2]*10 + stressCnt[3]*5;// **************adjust constant
   }
   
   void setStressEn(){
