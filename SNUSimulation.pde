@@ -39,7 +39,7 @@ void setup() {
   
   dispenseTick = 0;
   triggerOutlet = true;
-  size(1600, 350);
+  size(1600, 300);
   
   ps = new ArrayList<Person>();
   stations = new ArrayList<Attractor>();
@@ -48,30 +48,31 @@ void setup() {
   Env normal = new Env(4);
   normal.setRatio(new float[]{0.1, 0.1, 0.05, 0.75});
   normal.setInterval(new float[]{50,450,850,-10});
-  normal.setStationDir(new float[][]{{-1,1}, {-1,1}, {-1,1}, {0,0}});
+  normal.setStationDir(new float[][]{{-2,1}, {-2,1}, {-5,1}, {0,0}});
   normal.setGuideLineDist(new float[]{5, 5, 5, 0});
-  normal.setLineDistortion(new float[]{PI/180, PI/180, PI/180, 0});
+  normal.setLineDistortion(new float[]{PI/180/2, PI/180/2, PI/180/2, 0});
   normal.setStrictness(new float[]{12, 12, 12, 0});
   normal.setStartTick(new int[]{minutesToTicks(1), minutesToTicks(2), minutesToTicks(2), minutesToTicks(100)});
   normal.setMarginalTick(new int[]{minutesToTicks(7), minutesToTicks(7), minutesToTicks(5), minutesToTicks(1000)});
   
   Env shuffled151113 = normal.copy();
   shuffled151113.shuffle(new int[]{2, 0, 1, 3});
-  shuffled151113.setStationDir(new float[][]{{-4,1}, {-4,1}, {-10,1}, {0,0}});
+  shuffled151113.setStationDir(new float[][]{{-2,1}, {-2,1}, {-5,1}, {0,0}});
   shuffled151113.setGuideLineDist(new float[]{15, 10, 5, 0});
   
   Env shuffled111513 = normal.copy();
   shuffled111513.shuffle(new int[]{0, 2, 1, 3});
-  shuffled111513.setStationDir(new float[][]{{-4,1}, {-4,1}, {-10,1}, {0,0}});
+  shuffled111513.setStationDir(new float[][]{{-2,1}, {-2,1}, {-5,1}, {0,0}});
   shuffled111513.setGuideLineDist(new float[]{15, 10, 5, 0});
   
   Env remove5515 = normal.copy();
   remove5515.setRatio(new float[]{0.1, 0, 0.1, 0.8});
   remove5515.setInterval(new float[]{50,50,650,-10});
-  remove5515.setStationDir(new float[][]{{-4,1}, {-4,1}, {-5,1}, {0,0}});
+  remove5515.setStationDir(new float[][]{{-5,1}, {-4,1}, {-5,1}, {0,0}});
   remove5515.setGuideLineDist(new float[]{15, 0, 10, 0});
   remove5515.setLineDistortion(new float[]{0, 0, 0, 0});
   remove5515.setStrictness(new float[]{10, 0, 5, 0});
+  remove5515.setMarginalTick(new int[]{minutesToTicks(7), minutesToTicks(5), minutesToTicks(7), minutesToTicks(1000)});
   
   Env moved1 = normal.copy();
   moved1.setInterval(new float[]{50,250,850,-10});
@@ -82,7 +83,7 @@ void setup() {
   Env guideLined = normal.copy();
   guideLined.setStationDir(new float[][]{{0,1}, {-0,5,1}, {-0.75,1}, {0,0}});
   guideLined.setGuideLineDist(new float[]{5, 5, 5, 0});
-  guideLined.setLineDistortion(new float[]{2*PI/180, 4*PI/180, 4*PI/180, PI/180});
+  guideLined.setLineDistortion(new float[]{3*PI/180, 4*PI/180, 4*PI/180, PI/180});
   guideLined.setStrictness(new float[]{4, 6, 6, 0});
   
   envs.add(normal);
@@ -93,7 +94,7 @@ void setup() {
   envs.add(moved2);
   envs.add(guideLined);
   
-  int selectedEnvIdx = 6;
+  int selectedEnvIdx = 0;
   selectedEnv = envs.get(selectedEnvIdx);
   
   for(int i=0; i<selectedEnv.stationCnt; i++){
@@ -157,7 +158,7 @@ void draw() {
      }
      if(selectedEnv.triggerRide[i]){
        
-       selectedEnv.accomodate[i] += (int)random(15,25);
+       selectedEnv.accomodate[i] += (int)random(20,30);
        selectedEnv.triggerRide[i] = false;
      }
      if(stations.get(i).backward==null || !stations.get(i).backward.everCertified){

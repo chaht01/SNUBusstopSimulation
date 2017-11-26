@@ -480,7 +480,7 @@ class Person extends Attractor {
         _target = forward!=null ? forward: estimateTarget;
         targetDir = _target.direction.copy().rotate(lineDistortion);
         if (targetDir.heading()<0) {
-          targetDir = new PVector(-1, 0);
+          targetDir = new PVector(-10, 1).normalize();
         }
         if(!guessing){
           target = PVector.sub(_target.position, targetDir.setMag(2*intervalSize));
@@ -646,7 +646,7 @@ class Person extends Attractor {
     }
       
       if(seeStress){
-        float a = r * (1 + 2*stress); // *******************adjust constant
+        float a = r * (1 + stress); // *******************adjust constant
         float k = constrain(a, r, 3*r);
         fill(col);
         noStroke();
