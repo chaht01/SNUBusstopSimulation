@@ -2,6 +2,12 @@
 
 Simulation to propose the optimized shuttle bus waiting line based on pedestrians stress level using Processing and the autonomous agent that interpreting environments.
 
+
+## Demo
+
+![Demo](https://i.imgur.com/jNTit7w.png])(https://youtu.be/jh6ArPE7XMU)
+
+
 ## What is the problem?
 
 SNU students go their class by bus but due to its ambiguous waiting line and long average waiting time, they are struggling everyday morning. I want to solve this problem by using autonomous agent from "Nature of code" written by Daniel Shiffman.
@@ -40,11 +46,6 @@ To solve second issue, we assume three things like below.
 
 Install processing and launch this repository with directory name "SNUSimulation.pde".
 
-
-
-## Demo
-
-![Demo](https://i.imgur.com/jNTit7w.png])(https://youtu.be/jh6ArPE7XMU)
 
 
 
