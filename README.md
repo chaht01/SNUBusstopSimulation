@@ -57,7 +57,7 @@ Install processing and launch this repository with directory name "SNUSimulation
 
 ## Authors
 
-- **Hyuntak Cha** - *Maintainer* - [website](https://hyuntak.com)
+- **Hyuntak Cha** - *Maintainer* - [website](http://www.hyuntak.com)
 - **Seungyoun Lee** - Co-developer - [sylee421](https://github.com/sylee421)
 
 
