@@ -63,8 +63,6 @@ class FlowField {
     float len = v.mag()*scayl;
     // Draw three lines to make an arrow (draw pointing up since we've rotate to the proper direction)
     line(0,0,len,0);
-    //line(len,0,len-arrowsize,+arrowsize/2);
-    //line(len,0,len-arrowsize,-arrowsize/2);
     popMatrix();
   }
 
