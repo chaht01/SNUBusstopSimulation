@@ -48,7 +48,6 @@ class Person extends Attractor {
     velocity = new PVector(0, 0);
     certified = false;
     found = new boolean[_stations.size()];
-    //found[found.length-2] = true;
     lineDistortion = random(follow.lineDistortion, follow.lineDistortion*2);
     debug = false;
     seen = true;
@@ -75,7 +74,6 @@ class Person extends Attractor {
       velocity.add(acceleration);
       // Limit speed
       velocity.limit(maxspeed);
-      //velocity.x = velocity.x>0 ? velocity.x*0.1 : velocity.x;
       position.add(velocity);
       // Reset accelerationelertion to 0 each cycle
       acceleration.mult(0);
@@ -254,7 +252,6 @@ class Person extends Attractor {
             if (similar.size()>0) {
               guessing = true;
               break;
-              //temp = similar.get((int)random(similar.size()));
             } else {
               temp = temp.forward;
               guessing = false;
@@ -274,7 +271,6 @@ class Person extends Attractor {
                 found[fIdx] = true;
                 guessing = false;
               }
-              //col = color(255, 0, 255); //purple
               setForward(lastAttractorOfLine(stations.get(fIdx)));
             }
           } else {
@@ -329,12 +325,8 @@ class Person extends Attractor {
     } else {
       Attractor lastCertified = lastAttractorOfLine(stations.get(fIdx));
       if (lastCertified!=null) {
-        //col = color(0, 255, 255); //cyan
         guessing = false;
         setForward(lastCertified);
-        //println("3#");
-      } else {
-        //println("3");
       }
     }
   }
@@ -353,7 +345,6 @@ class Person extends Attractor {
 
       float maximumDist = 1.5*intervalSize; //critical to bottle neck 11.24, lower than 2 is proper.
       while (true) {
-        //float maximumDist = map(iterCnt, 0, 20, 1.5, 50)*intervalSize; //critical to bottle neck 11.24, lower than 2 is proper.
         tempTarget.position = PVector.sub(tempTarget.position, tempTarget.direction.copy().normalize().setMag(3*intervalSize));
         tempTarget.direction = tempTarget.direction.copy().normalize().rotate(tempTarget.lineDistortion);  //set direction
         if (tempTarget.direction.heading()<0) {
@@ -456,7 +447,6 @@ class Person extends Attractor {
     certified = true;
     everCertified = true;
     certifyOk = true;
-    //direction = forward.direction.copy();  //set direction
     if (!forward.equals(stations.get(fIdx))) {
       direction = forward.velocity.copy().normalize().rotate(lineDistortion);  //set direction
       if (direction.heading()<0) {
@@ -551,12 +541,10 @@ class Person extends Attractor {
 
 
 
-    //PVector target = _target.position;
     float arriveDistance = 4*intervalSize; //40
-    //float arriveDistance = map(systemSpeed, 1, 12, 4, 24)*intervalSize; //40
-    //arriveDistance = constrain(arriveDistance, intervalSize, stations.get(fIdx).strictness*intervalSize);
     PVector desired = PVector.sub(target, position);  // A vector pointing from the position to the target
     float d = desired.mag();
+
     // Scale with arbitrary damping within 100 pixels
     if (d < arriveDistance) {
       float m = map(d, 0, arriveDistance, 0, maxspeed);
@@ -584,9 +572,7 @@ class Person extends Attractor {
     float periphery = PI/2;
     PVector avgVel = new PVector(0, 0);
     PVector steer = new PVector(0, 0);
-    //if (distanceFromAttractor < getIntervalSize()*4) { 
-    //  return steer;
-    //}
+
     int count = 0;
     // For every boid in the system, check if it's too close
     for (Person other : boids) {
@@ -638,24 +624,12 @@ class Person extends Attractor {
   void display() {
     if (seen) {
       // Draw a triangle rotated in the direction of velocity
-      //if(debug){
       if (forward!=null) {
         forward.debugged = true;
       }
-      //}
-      if (debugged) {
-        //col = color(255, 0, 255);
-      }
-
 
       float theta = velocity.heading() + radians(90);
 
-      if (certified) {
-        //col = color(0, 255, 255);
-      }
-      if (found[fIdx]) {
-        //col = color(0, 255, 255);
-      }
       fill(col);
       noStroke();
       pushMatrix();
